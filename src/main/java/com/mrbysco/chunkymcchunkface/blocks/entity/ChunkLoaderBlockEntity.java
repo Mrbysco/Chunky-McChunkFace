@@ -130,7 +130,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 			loadedChunks.removeAll(loaderList);
 
 			for (ChunkPos pos : chunkPosList) {
-				ChunkyMcChunkFace.LOGGER.debug("Unloading chunk {}", pos);
+				ChunkyMcChunkFace.LOGGER.debug("Removing force load of chunk {}", pos);
 				loadedChunks.remove(pos);
 				serverLevel.setChunkForced(pos.x, pos.z, false);
 			}
@@ -166,7 +166,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 				for (ChunkPos pos : chunkPosList) {
 					loadedChunks.add(pos);
 					if (!serverLevel.getForcedChunks().contains(pos.toLong())) {
-						ChunkyMcChunkFace.LOGGER.info("Loading chunk {}", pos);
+						ChunkyMcChunkFace.LOGGER.info("Add force load on chunk {}", pos);
 						serverLevel.setChunkForced(pos.x, pos.z, true);
 					}
 				}
