@@ -1,11 +1,14 @@
 package com.mrbysco.chunkymcchunkface;
 
 import com.mojang.logging.LogUtils;
+import com.mrbysco.chunkymcchunkface.client.ClientHandler;
 import com.mrbysco.chunkymcchunkface.config.ChunkyConfig;
 import com.mrbysco.chunkymcchunkface.handler.PlayerHandler;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -27,5 +30,9 @@ public class ChunkyMcChunkFace {
 		ChunkyRegistry.ITEMS.register(eventBus);
 
 		MinecraftForge.EVENT_BUS.register(new PlayerHandler());
+
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			eventBus.addListener(ClientHandler::onClientSetup);
+		});
 	}
 }
