@@ -1,0 +1,20 @@
+package com.mrbysco.chunkymcchunkface.datagen.assets;
+
+import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
+import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
+
+public class ChunkyItemModelProvider extends ItemModelProvider {
+	public ChunkyItemModelProvider(DataGenerator gen, ExistingFileHelper helper) {
+		super(gen, ChunkyMcChunkFace.MOD_ID, helper);
+	}
+
+	@Override
+	protected void registerModels() {
+		ResourceLocation location = ChunkyRegistry.CHUNK_LOADER.getId();
+		withExistingParent(location.getPath(), modLoc("block/hourglass"));
+	}
+}

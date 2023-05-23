@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+issueTrackerURL="https://github.com/Mrbysco/Chunky-McChunkFace/issues"
+license="MIT"
+
+[[mods]]
+modId="chunkymcchunkface"
+version="${file.jarVersion}"
+displayName="Chunky McChunkFace"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/Chunky-McChunkFace"
+authors="Mrbysco, ShyNieke"
+description='''
+A mod that adds chunkloaders that can be activated to stay active for as long as the player is online and some time after they log off.
+'''
+[[dependencies.chunkymcchunkface]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.18.2,1.19)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.chunkymcchunkface]]
+modId="forge"
+mandatory=true
+versionRange="[40.1.0,)"
+ordering="NONE"
+side="BOTH"

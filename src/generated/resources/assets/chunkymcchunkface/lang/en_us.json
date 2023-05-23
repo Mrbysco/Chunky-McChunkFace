@@ -1,0 +1,6 @@
+{
+  "block.chunkymcchunkface.chunk_loader": "Chunky McChunkFace",
+  "chunkymcchunkface.blocks.text": "An example of an allowed block is %s",
+  "chunkymcchunkface.extend.text": "Expand the loaded area by building a pyramid of allowed blocks beneath the chunk loader",
+  "chunkymcchunkface.shift.text": "Hold SHIFT for more information"
+}

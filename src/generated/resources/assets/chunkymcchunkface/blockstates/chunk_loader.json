@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "enabled=false": {
+      "model": "chunkymcchunkface:block/hourglass_off"
+    },
+    "enabled=true": {
+      "model": "chunkymcchunkface:block/hourglass"
+    }
+  }
+}

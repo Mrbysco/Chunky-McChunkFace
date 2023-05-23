@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GOG",
+    "WEW",
+    "GOG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "E": {
+      "tag": "forge:nether_stars"
+    },
+    "O": {
+      "tag": "forge:obsidian"
+    },
+    "W": {
+      "tag": "forge:glass"
+    }
+  },
+  "result": {
+    "item": "chunkymcchunkface:chunk_loader"
+  }
+}
