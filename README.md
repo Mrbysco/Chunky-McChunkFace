@@ -9,7 +9,7 @@ Chunky McChunkFace is a versatile chunk loader mod for Minecraft that ensures yo
 Features:
 * Chunk Loader Block: Activate chunk loading by interacting with the Chunky McChunkFace block.
 * Automatic Disable: If all players who interacted with the chunk loader are offline for a configurable period (default: 7 in-game days (140 minutes)), it automatically turns off.
-* Upgradeable Range: . (Like you would with a beacon)
+* Upgradeable Range: Expand the loaded area by building a pyramid of allowed blocks beneath the chunk loader. (Like you would with a beacon)
 * Configuration Options: Fine-tune settings such as base range, tier ranges, and offline time.
 
 Keep your farms, buildings, and important areas continuously loaded with Chunky McChunkFace. Enjoy a seamless Minecraft experience even when you're away.
