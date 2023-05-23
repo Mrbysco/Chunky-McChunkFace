@@ -33,6 +33,7 @@ public class ChunkyMcChunkFace {
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			eventBus.addListener(ClientHandler::onClientSetup);
+			eventBus.addListener(ClientHandler::registerEntityRenders);
 		});
 	}
 }
