@@ -278,33 +278,6 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		}
 	}
 
-	@Override
-	public void setRemoved() {
-		if (level != null) {
-			//Remove chunk loading
-			unloadChunks();
-			//Remove from ChunkLoader map
-			if (!level.isClientSide) {
-				ChunkData data = ChunkData.get(level);
-				data.removeChunkLoaderPosition(level, getBlockPos());
-				data.setDirty();
-				data.reloadChunks(level.getServer());
-			}
-		}
-		super.setRemoved();
-	}
-
-	@Override
-	public void onLoad() {
-		super.onLoad();
-		//Add to ChunkLoader map
-		if (this.level != null && !level.isClientSide) {
-			ChunkData data = ChunkData.get(level);
-			data.addChunkLoaderPosition(level, getBlockPos());
-			data.setDirty();
-		}
-	}
-
 	public void load(CompoundTag tag) {
 		super.load(tag);
 		this.tier = tag.getInt("Levels");

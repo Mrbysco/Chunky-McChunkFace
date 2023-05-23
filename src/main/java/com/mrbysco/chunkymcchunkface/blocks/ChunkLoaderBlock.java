@@ -1,6 +1,7 @@
 package com.mrbysco.chunkymcchunkface.blocks;
 
 import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkLoaderBlockEntity;
+import com.mrbysco.chunkymcchunkface.data.ChunkData;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyTags;
 import net.minecraft.ChatFormatting;
@@ -11,6 +12,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -63,6 +65,46 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 			}
 
 			return InteractionResult.CONSUME;
+		}
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
+		if (!level.isClientSide) {
+			//Add to ChunkLoader map
+			ChunkData data = ChunkData.get(level);
+			data.addChunkLoaderPosition(level, pos);
+			data.setDirty();
+		}
+	}
+
+	@Override
+	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState state1, boolean p_60570_) {
+		if (!level.isClientSide) {
+			//Add to ChunkLoader map
+			ChunkData data = ChunkData.get(level);
+			data.addChunkLoaderPosition(level, pos);
+			data.setDirty();
+		}
+		super.onPlace(state, level, pos, state1, p_60570_);
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean p_51542_) {
+		if (!state.is(newState.getBlock())) {
+			if (!level.isClientSide) {
+				if (level.getBlockEntity(pos) instanceof ChunkLoaderBlockEntity blockEntity) {
+					//Remove chunk loading
+					blockEntity.unloadChunks();
+
+					//Remove from ChunkLoader map
+					ChunkData data = ChunkData.get(level);
+					data.removeChunkLoaderPosition(level, pos);
+					data.setDirty();
+				}
+			}
+
+			super.onRemove(state, level, pos, newState, p_51542_);
 		}
 	}
 
