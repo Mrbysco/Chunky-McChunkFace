@@ -119,7 +119,7 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
 		boolean flag = level.hasNeighborSignal(pos);
 		//Check if the block is powered
-		if (flag) {
+		if (flag && state.getValue(ENABLED)) {
 			if (level.getBlockEntity(pos) instanceof ChunkLoaderBlockEntity blockEntity) {
 				//Disable the chunk loader and clear the player cache
 				level.setBlockAndUpdate(pos, state.setValue(ENABLED, Boolean.valueOf(false)));
@@ -137,12 +137,15 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 		if (Screen.hasShiftDown()) {
 			components.add(new TranslatableComponent("chunkymcchunkface.extend.text").withStyle(ChatFormatting.GOLD));
 			//Get a random block from the ChunkyTags.UPGRADE_BLOCKS tag every 2 seconds and get the translation key
-			var tag = ForgeRegistries.BLOCKS.tags().getTag(ChunkyTags.UPGRADE_BLOCKS);
-			if (tag != null && tag.size() > 0) {
-				int index = (int) (System.currentTimeMillis() / 1000 % tag.size());
-				Block randomBlock = (Block) tag.stream().toArray()[index];
-				Component blockName = new TranslatableComponent(randomBlock.getDescriptionId()).withStyle(ChatFormatting.WHITE);
-				components.add(new TranslatableComponent("chunkymcchunkface.blocks.text", blockName).withStyle(ChatFormatting.GREEN));
+			var tags = ForgeRegistries.BLOCKS.tags();
+			if (tags != null) {
+				var tag = tags.getTag(ChunkyTags.UPGRADE_BLOCKS);
+				if (tag.size() > 0) {
+					int index = (int) (System.currentTimeMillis() / 1000 % tag.size());
+					Block randomBlock = (Block) tag.stream().toArray()[index];
+					Component blockName = new TranslatableComponent(randomBlock.getDescriptionId()).withStyle(ChatFormatting.WHITE);
+					components.add(new TranslatableComponent("chunkymcchunkface.blocks.text", blockName).withStyle(ChatFormatting.GREEN));
+				}
 			}
 
 		} else {
