@@ -91,7 +91,7 @@ public class ChunkValidationCallback implements ForgeChunkManager.LoadingValidat
 
 						//Mark the chunk loader as being initialized
 						if (removed == 0 && added == 0) {
-							ChunkyMcChunkFace.LOGGER.debug("Tickets for position: {} in {}, successfully validated.", pos, dimensionLocation);
+							ChunkyMcChunkFace.LOGGER.debug("Chunk tickets for position: {} in {}, successfully validated.", pos, dimensionLocation);
 						} else {
 							blockEntity.setChanged();
 							//Note: Info level as this may be intended/expected when configs change (for example reducing max radius),
