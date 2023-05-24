@@ -2,15 +2,11 @@ package com.mrbysco.chunkymcchunkface.data;
 
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
-import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkLoaderBlockEntity;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -52,6 +48,7 @@ public class ChunkData extends SavedData {
 		loaderMap.add(pos.asLong());
 
 		chunkloaderMap.put(dimensionLocation, loaderMap);
+		this.setDirty();
 	}
 
 	/**
@@ -67,6 +64,7 @@ public class ChunkData extends SavedData {
 		loaderMap.remove(pos.asLong());
 
 		chunkloaderMap.put(dimensionLocation, loaderMap);
+		this.setDirty();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -83,44 +81,6 @@ public class ChunkData extends SavedData {
 			}
 		}
 		return chunkPosList;
-	}
-
-	/**
-	 * Reload the chunks loaded by all chunk loaders
-	 *
-	 * @param server The server instance
-	 */
-	@SuppressWarnings("deprecation")
-	public void reloadChunks(MinecraftServer server) {
-		for (Map.Entry<ResourceLocation, List<Long>> entry : chunkloaderMap.entrySet()) {
-			ServerLevel serverLevel = server.getLevel(getLevelKey(entry.getKey()));
-			//Check if the level is null, if so, skip it
-			if (serverLevel == null) return;
-
-			List<Long> loaderPositions = entry.getValue();
-			for (Long posLong : loaderPositions) {
-				final BlockPos pos = BlockPos.of(posLong);
-				//Check if the area is loaded, if not, skip it
-				if (!serverLevel.isAreaLoaded(pos, 1)) return;
-
-				final BlockState state = serverLevel.getBlockState(pos);
-				if (state.is(ChunkyRegistry.CHUNK_LOADER.get()) && state.getValue(ChunkLoaderBlock.ENABLED)) {
-					if (serverLevel.getBlockEntity(pos) instanceof ChunkLoaderBlockEntity blockEntity) {
-						blockEntity.loadChunks();
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Get the ResourceKey for the dimension resource location
-	 *
-	 * @param dimensionLocation The dimension resource location
-	 * @return The ResourceKey for the dimension
-	 */
-	private ResourceKey<Level> getLevelKey(ResourceLocation dimensionLocation) {
-		return ResourceKey.create(Registry.DIMENSION_REGISTRY, dimensionLocation);
 	}
 
 	/**
@@ -141,6 +101,7 @@ public class ChunkData extends SavedData {
 	 */
 	public void addPlayer(UUID uuid, long gameTime) {
 		playerTimeMap.put(uuid, gameTime);
+		this.setDirty();
 	}
 
 	/**
@@ -150,8 +111,8 @@ public class ChunkData extends SavedData {
 	 */
 	public void removePlayer(UUID uuid) {
 		playerTimeMap.remove(uuid);
+		this.setDirty();
 	}
-
 
 	public static ChunkData load(CompoundTag tag) {
 		ListTag loaderMapTag = tag.getList("ChunkLoaderMap", CompoundTag.TAG_COMPOUND);
@@ -173,7 +134,6 @@ public class ChunkData extends SavedData {
 
 		ListTag playerTimeTag = tag.getList("PlayerTimeMap", CompoundTag.TAG_COMPOUND);
 		Map<UUID, Long> playerTimeMap = new HashMap<>();
-
 		for (int i = 0; i < playerTimeTag.size(); ++i) {
 			CompoundTag listTag = playerTimeTag.getCompound(i);
 			UUID uuid = listTag.getUUID("UUID");

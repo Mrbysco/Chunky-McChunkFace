@@ -7,6 +7,8 @@ import com.mrbysco.chunkymcchunkface.data.ChunkData;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyTags;
 import com.mrbysco.chunkymcchunkface.util.ChunkyHelper;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -28,7 +30,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	private static final int MAX_TIERS = 4;
 	private int tier;
 	private final List<UUID> playerCache = new ArrayList<>();
-	private final List<ChunkPos> loadedChunks = new ArrayList<>();
+	protected final LongSet loadedChunks = new LongOpenHashSet();
 	private int cooldown = 0;
 
 	public ChunkLoaderBlockEntity(BlockPos pos, BlockState state) {
@@ -117,35 +119,36 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	public void unloadChunks() {
 		//Unload chunks based around the tier range
 		if (level != null && !level.isClientSide) {
+			ChunkyMcChunkFace.LOGGER.debug("Attempting to remove {} chunk tickets. pos: {} world: {}",
+					loadedChunks.size(), worldPosition.toShortString(), level.dimension().location());
 			ServerLevel serverLevel = (ServerLevel) level;
 			ChunkData data = ChunkData.get(level);
 
-			ChunkPos centerChunk = new ChunkPos(worldPosition);
+			long centerChunk = new ChunkPos(worldPosition).toLong();
 			int range = getRange(tier);
-			List<ChunkPos> chunkPosList = ChunkyHelper.generateChunkPosList(centerChunk, range);
+			LongSet chunkPosList = ChunkyHelper.generateChunkPosList(centerChunk, range);
 			List<ChunkPos> loaderList = data.getActiveChunkLoaderChunks(serverLevel);
 
 			//Remove the chunks that contain an active ChunkLoader from the list
-			chunkPosList.removeAll(loaderList);
-			loadedChunks.removeAll(loaderList);
+			loaderList.forEach(pos -> {
+				long longPos = pos.toLong();
+				chunkPosList.remove(longPos);
+				loadedChunks.remove(longPos);
+			});
 
-			for (ChunkPos pos : chunkPosList) {
-				ChunkyMcChunkFace.LOGGER.debug("Removing force load of chunk {}", pos);
+			for (long pos : chunkPosList) {
 				loadedChunks.remove(pos);
-				serverLevel.setChunkForced(pos.x, pos.z, false);
+				ChunkyHelper.releaseChunkTicket(serverLevel, worldPosition, pos);
 			}
 
-			for (ChunkPos pos : loadedChunks) {
-				serverLevel.setChunkForced(pos.x, pos.z, false);
+			for (long pos : loadedChunks) {
+				ChunkyHelper.releaseChunkTicket(serverLevel, worldPosition, pos);
 			}
 			loadedChunks.clear();
-
 			setChanged();
 
-			data.reloadChunks(serverLevel.getServer());
-
 			//Remove the chunk the loader is in last
-			serverLevel.setChunkForced(centerChunk.x, centerChunk.z, false);
+			ChunkyHelper.releaseChunkTicket(serverLevel, worldPosition, centerChunk);
 		}
 	}
 
@@ -159,17 +162,15 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 			//Load chunks based around the tier range
 			if (level != null && !level.isClientSide) {
 				ServerLevel serverLevel = (ServerLevel) level;
-				ChunkPos centerChunk = new ChunkPos(worldPosition);
+				long centerChunk = new ChunkPos(worldPosition).toLong();
 				int range = getRange(tier);
 
-				List<ChunkPos> chunkPosList = ChunkyHelper.generateChunkPosList(centerChunk, range);
-				for (ChunkPos pos : chunkPosList) {
+				LongSet chunkPosList = ChunkyHelper.generateChunkPosList(centerChunk, range);
+				for (long pos : chunkPosList) {
 					loadedChunks.add(pos);
-					if (!serverLevel.getForcedChunks().contains(pos.toLong())) {
-						ChunkyMcChunkFace.LOGGER.info("Add force load on chunk {}", pos);
-						serverLevel.setChunkForced(pos.x, pos.z, true);
-					}
+					ChunkyHelper.registerChunkTicket(serverLevel, worldPosition, pos);
 				}
+				setChanged();
 			}
 		}
 	}
@@ -189,9 +190,6 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		if (level != null && !level.isClientSide && isEnabled()) {
 			unloadChunks();
 			loadChunks(getTier());
-
-			ChunkData data = ChunkData.get(level);
-			data.reloadChunks(level.getServer());
 		}
 	}
 
@@ -275,6 +273,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	public void addPlayer(UUID uuid) {
 		if (!playerCache.contains(uuid)) {
 			playerCache.add(uuid);
+			setChanged();
 		}
 	}
 
@@ -282,11 +281,16 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		super.load(tag);
 		this.tier = tag.getInt("Levels");
 		this.cooldown = tag.getInt("Cooldown");
-		ListTag loadedChunkTag = tag.getList("loadedChunks", ListTag.TAG_COMPOUND);
-		for (int j = 0; j < loadedChunkTag.size(); ++j) {
-			CompoundTag chunkTag = loadedChunkTag.getCompound(j);
-			ChunkPos pos = new ChunkPos(chunkTag.getLong("ChunkPos"));
-			loadedChunks.add(pos);
+
+		if (!loadedChunks.isEmpty()) {
+			if (hasLevel()) {
+				unloadChunks();
+			} else {
+				loadedChunks.clear();
+			}
+		}
+		for (long chunk : tag.getLongArray("loadedChunks")) {
+			loadedChunks.add(chunk);
 		}
 
 		ListTag playerCacheTag = tag.getList("playerCache", ListTag.TAG_COMPOUND);
@@ -300,14 +304,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		super.saveAdditional(tag);
 		tag.putInt("Levels", this.tier);
 		tag.putInt("Cooldown", this.cooldown);
-
-		ListTag blockPositions = new ListTag();
-		for (ChunkPos pos : loadedChunks) {
-			CompoundTag blockPosTag = new CompoundTag();
-			blockPosTag.putLong("ChunkPos", pos.toLong());
-			blockPositions.add(blockPosTag);
-		}
-		tag.put("loadedChunks", blockPositions);
+		tag.putLongArray("loadedChunks", loadedChunks.toLongArray());
 
 		ListTag playerCacheTag = new ListTag();
 		for (UUID uuid : playerCache) {
@@ -316,6 +313,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 			playerCacheTag.add(cacheTag);
 		}
 		tag.put("playerCache", playerCacheTag);
+
 	}
 
 	@Override
@@ -345,4 +343,5 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
 	}
+
 }
