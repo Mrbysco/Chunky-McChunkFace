@@ -15,7 +15,6 @@ public class PlayerHandler {
 			ChunkData data = ChunkData.get(level);
 			data.removePlayer(player.getUUID());
 			data.setDirty();
-			data.reloadChunks(level.getServer());
 		}
 	}
 
@@ -27,7 +26,6 @@ public class PlayerHandler {
 			ChunkData data = ChunkData.get(level);
 			data.addPlayer(player.getUUID(), level.getGameTime());
 			data.setDirty();
-			data.reloadChunks(level.getServer());
 		}
 	}
 }
