@@ -118,7 +118,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	/**
 	 * Loads the chunks
 	 * This method gets called when a player interacts with the block
-	 * The cooldown is there to not set the chunks as force loaded every tick right-click is held down
+	 * There's a second cooldown to prevent spamming
 	 */
 	public void enableChunkLoading() {
 		if (cooldown == 0) {
