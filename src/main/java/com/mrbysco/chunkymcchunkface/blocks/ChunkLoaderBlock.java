@@ -69,16 +69,6 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 	}
 
 	@Override
-	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
-		if (!level.isClientSide) {
-			//Add to ChunkLoader map
-			ChunkData data = ChunkData.get(level);
-			data.addChunkLoaderPosition(level, pos);
-			data.setDirty();
-		}
-	}
-
-	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState state1, boolean p_60570_) {
 		if (!level.isClientSide) {
 			//Add to ChunkLoader map
