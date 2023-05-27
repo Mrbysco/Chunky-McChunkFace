@@ -3,6 +3,7 @@ package com.mrbysco.chunkymcchunkface;
 import com.mojang.logging.LogUtils;
 import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkValidationCallback;
 import com.mrbysco.chunkymcchunkface.client.ClientHandler;
+import com.mrbysco.chunkymcchunkface.commands.ChunkyCommands;
 import com.mrbysco.chunkymcchunkface.config.ChunkyConfig;
 import com.mrbysco.chunkymcchunkface.handler.PlayerHandler;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
@@ -35,6 +36,7 @@ public class ChunkyMcChunkFace {
 		ChunkyRegistry.ITEMS.register(eventBus);
 
 		MinecraftForge.EVENT_BUS.register(new PlayerHandler());
+		MinecraftForge.EVENT_BUS.register(new ChunkyCommands());
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			eventBus.addListener(ClientHandler::onClientSetup);

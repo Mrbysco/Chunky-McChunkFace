@@ -14,6 +14,8 @@ public class ChunkyLanguageProvider extends LanguageProvider {
 	protected void addTranslations() {
 		addBlock(ChunkyRegistry.CHUNK_LOADER, "Chunky McChunkFace");
 
+		add("chunkymcchunkface.command.list", "Chunk loaders in dimension <%s>");
+		add("chunkymcchunkface.command.list.empty", "No known Chunk loaders located in <%s>");
 		add("chunkymcchunkface.shift.text", "Hold SHIFT for more information");
 		add("chunkymcchunkface.extend.text", "Expand the loaded area by building a pyramid of allowed blocks beneath the chunk loader");
 		add("chunkymcchunkface.blocks.text", "An example of an allowed block is %s");
