@@ -8,5 +8,7 @@
   "chunkymcchunkface.command.list": "Chunk loaders in dimension <%s>",
   "chunkymcchunkface.command.list.empty": "No known Chunk loaders located in <%s>",
   "chunkymcchunkface.extend.text": "Expand the loaded area by building a pyramid of allowed blocks beneath the chunk loader",
-  "chunkymcchunkface.shift.text": "Hold SHIFT for more information"
+  "chunkymcchunkface.shift.text": "Hold SHIFT for more information",
+  "key.chunkymcchunkface.category": "Chunky McChunkFace",
+  "key.chunkymcchunkface.show_bounds": "Show Chunk Loader Radius"
 }

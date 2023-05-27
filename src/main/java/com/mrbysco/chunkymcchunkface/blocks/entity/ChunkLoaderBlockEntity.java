@@ -20,6 +20,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		if (level.getGameTime() % 80L == 0L) {
 			int tier = getUpdatedTier(level, pos);
 			if (tier != blockEntity.tier) {
+				ChunkyMcChunkFace.LOGGER.info("ChunkLoader at {} has been updated from tier {} to tier {}", pos, blockEntity.tier, tier);
 				//Unload Chunks
 				blockEntity.tier = tier;
 				blockEntity.refreshChunks();
@@ -159,7 +161,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 				ChunkyHelper.releaseChunkTicket(serverLevel, worldPosition, pos);
 			}
 			loadedChunks.clear();
-			setChanged();
+			refreshClient();
 
 			//Remove the chunk the loader is in last
 			ChunkyHelper.releaseChunkTicket(serverLevel, worldPosition, centerChunk);
@@ -184,7 +186,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 					loadedChunks.add(pos);
 					ChunkyHelper.registerChunkTicket(serverLevel, worldPosition, pos);
 				}
-				setChanged();
+				refreshClient();
 			}
 		}
 	}
@@ -262,6 +264,13 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	}
 
 	/**
+	 * Gets the range based on the current tier
+	 */
+	public int getRange() {
+		return getRange(getTier());
+	}
+
+	/**
 	 * Gets the tier
 	 *
 	 * @return The tier
@@ -287,7 +296,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	public void addPlayer(UUID uuid) {
 		if (!playerCache.contains(uuid)) {
 			playerCache.add(uuid);
-			setChanged();
+			refreshClient();
 		}
 	}
 
@@ -358,4 +367,19 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
+	/**
+	 * Update the client whenever the chunk loader is modified
+	 */
+	private void refreshClient() {
+		setChanged();
+		BlockState state = level.getBlockState(worldPosition);
+		level.sendBlockUpdated(worldPosition, state, state, 2);
+	}
+
+
+	@Override
+	public AABB getRenderBoundingBox() {
+		// our render bounding box should always be the full block in case we're covered
+		return INFINITE_EXTENT_AABB;
+	}
 }
