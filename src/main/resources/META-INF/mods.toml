@@ -9,6 +9,7 @@ version="${file.jarVersion}"
 displayName="Chunky McChunkFace"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/Chunky-McChunkFace"
 authors="Mrbysco, ShyNieke"
+credits="Douwsky for suggesting me to make this mod"
 description='''
 A mod that adds chunkloaders that can be activated to stay active for as long as the player is online and some time after they log off.
 '''
