@@ -27,7 +27,7 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 		final Minecraft mc = Minecraft.getInstance();
 		final LocalPlayer player = mc.player;
 
-		if (player == null || !player.getAbilities().instabuild) return;
+		if (player == null) return;
 
 		if (player.getMainHandItem().is(ChunkyRegistry.CHUNK_LOADER_ITEM.get())) {
 			final RenderType renderType = LineRenderType.lineRenderType(8.0F);
