@@ -3,6 +3,8 @@ package com.mrbysco.chunkymcchunkface.data;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -23,10 +25,10 @@ import java.util.UUID;
 public class ChunkData extends SavedData {
 	private static final String DATA_NAME = ChunkyMcChunkFace.MOD_ID + "_data";
 
-	public final Map<ResourceLocation, List<Long>> chunkloaderMap;
+	public final Map<ResourceLocation, LongSet> chunkloaderMap;
 	public final Map<UUID, Long> playerTimeMap;
 
-	public ChunkData(Map<ResourceLocation, List<Long>> dimensionLoaderMap, Map<UUID, Long> playerTimeMap) {
+	public ChunkData(Map<ResourceLocation, LongSet> dimensionLoaderMap, Map<UUID, Long> playerTimeMap) {
 		this.chunkloaderMap = dimensionLoaderMap;
 		this.playerTimeMap = playerTimeMap;
 	}
@@ -43,7 +45,7 @@ public class ChunkData extends SavedData {
 	 */
 	public void addChunkLoaderPosition(Level level, BlockPos pos) {
 		ResourceLocation dimensionLocation = level.dimension().location();
-		List<Long> loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new ArrayList<>());
+		LongSet loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new LongOpenHashSet());
 
 		loaderMap.add(pos.asLong());
 
@@ -59,7 +61,7 @@ public class ChunkData extends SavedData {
 	 */
 	public void removeChunkLoaderPosition(Level level, BlockPos pos) {
 		ResourceLocation dimensionLocation = level.dimension().location();
-		List<Long> loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new ArrayList<>());
+		LongSet loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new LongOpenHashSet());
 
 		loaderMap.remove(pos.asLong());
 
@@ -70,7 +72,7 @@ public class ChunkData extends SavedData {
 	@SuppressWarnings("deprecation")
 	public List<ChunkPos> getActiveChunkLoaderChunks(ServerLevel level) {
 		List<ChunkPos> chunkPosList = new ArrayList<>();
-		List<Long> loaderPositions = chunkloaderMap.getOrDefault(level.dimension().location(), new ArrayList<>());
+		LongSet loaderPositions = chunkloaderMap.getOrDefault(level.dimension().location(), new LongOpenHashSet());
 		for (long posLong : loaderPositions) {
 			final BlockPos pos = BlockPos.of(posLong);
 			//Check if area is loaded and if the block is active
@@ -81,6 +83,22 @@ public class ChunkData extends SavedData {
 			}
 		}
 		return chunkPosList;
+	}
+
+	/**
+	 * Get the list of chunk loaders in the dimension
+	 *
+	 * @param dimension The dimension to get the chunk loaders from
+	 * @return The list of chunk loaders in the dimension
+	 */
+	public List<BlockPos> generateList(ResourceLocation dimension) {
+		List<BlockPos> positions = new ArrayList<>();
+		//Get all the chunk loaders in the dimension
+		LongSet chunkLoaderList = chunkloaderMap.getOrDefault(dimension, new LongOpenHashSet());
+		if (!chunkLoaderList.isEmpty()) {
+			chunkLoaderList.forEach(posLong -> positions.add(BlockPos.of(posLong)));
+		}
+		return positions;
 	}
 
 	/**
@@ -116,20 +134,18 @@ public class ChunkData extends SavedData {
 
 	public static ChunkData load(CompoundTag tag) {
 		ListTag loaderMapTag = tag.getList("ChunkLoaderMap", CompoundTag.TAG_COMPOUND);
-		Map<ResourceLocation, List<Long>> loaderMap = new HashMap<>();
+		Map<ResourceLocation, LongSet> loaderMap = new HashMap<>();
 
 		for (int i = 0; i < loaderMapTag.size(); ++i) {
 			CompoundTag listTag = loaderMapTag.getCompound(i);
 			String dimension = listTag.getString("Dimension");
 			ResourceLocation dimensionLocation = ResourceLocation.tryParse(dimension);
 
-			List<Long> blockPositionsList = new ArrayList<>();
-			ListTag blockPositions = listTag.getList("BlockPositions", ListTag.TAG_COMPOUND);
-			for (int j = 0; j < blockPositions.size(); ++j) {
-				CompoundTag blockPosTag = blockPositions.getCompound(j);
-				blockPositionsList.add(blockPosTag.getLong("BlockPos"));
+			LongSet chunkLoaderSet = new LongOpenHashSet();
+			for (long chunk : listTag.getLongArray("BlockPositions")) {
+				chunkLoaderSet.add(chunk);
 			}
-			loaderMap.put(dimensionLocation, blockPositionsList);
+			loaderMap.put(dimensionLocation, chunkLoaderSet);
 		}
 
 		ListTag playerTimeTag = tag.getList("PlayerTimeMap", CompoundTag.TAG_COMPOUND);
@@ -148,18 +164,10 @@ public class ChunkData extends SavedData {
 	@Override
 	public CompoundTag save(CompoundTag tag) {
 		ListTag loaderMapTag = new ListTag();
-		for (Map.Entry<ResourceLocation, List<Long>> entry : chunkloaderMap.entrySet()) {
+		for (Map.Entry<ResourceLocation, LongSet> entry : chunkloaderMap.entrySet()) {
 			CompoundTag loaderTag = new CompoundTag();
 			loaderTag.putString("Dimension", entry.getKey().toString());
-
-			ListTag blockPositions = new ListTag();
-
-			for (Long pos : entry.getValue()) {
-				CompoundTag blockPosTag = new CompoundTag();
-				blockPosTag.putLong("BlockPos", pos);
-				blockPositions.add(blockPosTag);
-			}
-			loaderTag.put("BlockPositions", blockPositions);
+			loaderTag.putLongArray("BlockPositions", entry.getValue().toLongArray());
 
 			loaderMapTag.add(loaderTag);
 		}
