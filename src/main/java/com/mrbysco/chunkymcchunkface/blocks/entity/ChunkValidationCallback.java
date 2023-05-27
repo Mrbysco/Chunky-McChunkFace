@@ -2,6 +2,8 @@ package com.mrbysco.chunkymcchunkface.blocks.entity;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
+import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
+import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import com.mrbysco.chunkymcchunkface.util.ChunkyHelper;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -9,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.world.ForgeChunkManager;
 
 import java.util.Map;
@@ -114,6 +117,11 @@ public class ChunkValidationCallback implements ForgeChunkManager.LoadingValidat
 		//Release all tickets associated with the chunk loader
 		ticketHelper.removeAllTickets(pos);
 		blockEntity.loadedChunks.clear();
+
+		BlockState state = blockEntity.getBlockState();
+		if (state.is(ChunkyRegistry.CHUNK_LOADER.get())) {
+			blockEntity.getLevel().setBlockAndUpdate(pos, state.setValue(ChunkLoaderBlock.ENABLED, Boolean.valueOf(false)));
+		}
 
 		//Mark the block entity as changed, so it gets saved and updates
 		blockEntity.setChanged();

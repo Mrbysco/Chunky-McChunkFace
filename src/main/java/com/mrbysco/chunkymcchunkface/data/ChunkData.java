@@ -102,6 +102,25 @@ public class ChunkData extends SavedData {
 	}
 
 	/**
+	 * Get the list of active chunk loaders in the dimension
+	 *
+	 * @param level     The level to get the chunk loaders from
+	 * @param positions The list of positions to check
+	 * @return The list of active chunk loaders in the dimension
+	 */
+	public List<BlockPos> getActivePositions(ServerLevel level, List<BlockPos> positions) {
+		List<BlockPos> posList = new ArrayList<>(positions);
+		posList.removeIf(pos -> {
+			if (level.isAreaLoaded(pos, 1)) {
+				BlockState state = level.getBlockState(pos);
+				return !state.is(ChunkyRegistry.CHUNK_LOADER.get()) || !state.getValue(ChunkLoaderBlock.ENABLED);
+			}
+			return true;
+		});
+		return posList;
+	}
+
+	/**
 	 * Get the last time the player was seen
 	 *
 	 * @param uuid The UUID of the player

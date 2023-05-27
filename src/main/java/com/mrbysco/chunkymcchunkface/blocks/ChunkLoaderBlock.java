@@ -12,7 +12,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -85,7 +84,7 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 			if (!level.isClientSide) {
 				if (level.getBlockEntity(pos) instanceof ChunkLoaderBlockEntity blockEntity) {
 					//Remove chunk loading
-					blockEntity.unloadChunks();
+					blockEntity.disableChunkLoader();
 
 					//Remove from ChunkLoader map
 					ChunkData data = ChunkData.get(level);

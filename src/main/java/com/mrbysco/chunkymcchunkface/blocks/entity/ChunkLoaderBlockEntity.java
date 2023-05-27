@@ -52,8 +52,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 //			ChunkyMcChunkFace.LOGGER.info("Checking if ChunkLoader at: " + pos + " should be disabled");
 			if (blockEntity.playerCache.isEmpty()) {
 //					ChunkyMcChunkFace.LOGGER.info("Chunk Loader at {} was active without cached players, disabling", pos);
-				level.setBlockAndUpdate(pos, state.setValue(ChunkLoaderBlock.ENABLED, Boolean.valueOf(false)));
-				blockEntity.unloadChunks();
+				blockEntity.disableChunkLoaderState();
+				blockEntity.disableChunkLoader();
 			} else {
 				boolean isPlayerOnline = false;
 				long latestTime = 0;
@@ -77,9 +77,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 					int configuredTicks = ChunkyConfig.COMMON.offlineTime.get();
 					if (latestTime > 0 && (level.getGameTime() - latestTime) > configuredTicks) {
 						ChunkyMcChunkFace.LOGGER.info("ChunkLoader at {} has been disabled due to inactivity of the players {}", pos, ChunkyHelper.formatTicks(configuredTicks));
-						level.setBlockAndUpdate(pos, state.setValue(ChunkLoaderBlock.ENABLED, Boolean.valueOf(false)));
-						blockEntity.clearPlayerCache();
-						blockEntity.unloadChunks();
+						blockEntity.disableChunkLoaderState();
+						blockEntity.disableChunkLoader();
 					}
 				} else {
 					if (level.getGameTime() % 100L == 0L) {
@@ -92,6 +91,21 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		if (blockEntity.cooldown > 0) {
 			blockEntity.cooldown--;
 		}
+	}
+
+	/**
+	 * Clear the player cache and unload chunks
+	 */
+	public void disableChunkLoader() {
+		clearPlayerCache();
+		unloadChunks();
+	}
+
+	/**
+	 * Change the state to disabled
+	 */
+	public void disableChunkLoaderState() {
+		level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(ChunkLoaderBlock.ENABLED, Boolean.valueOf(false)));
 	}
 
 	/**
