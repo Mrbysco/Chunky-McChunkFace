@@ -12,7 +12,7 @@ public class ClientHandler {
 	public static void onClientSetup(final FMLClientSetupEvent event) {
 		ClientRegistry.registerKeyBinding(KeyHandler.KEY_SHOW_BOUNDS);
 
-		ItemBlockRenderTypes.setRenderLayer(ChunkyRegistry.CHUNK_LOADER.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(ChunkyRegistry.CHUNK_LOADER.get(), RenderType.cutout());
 	}
 
 	public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
