@@ -1,1 +1,1 @@
-* Adjust the texture of the glass
+* Initial update to 1.19.2

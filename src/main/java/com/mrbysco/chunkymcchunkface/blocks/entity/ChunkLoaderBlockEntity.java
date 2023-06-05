@@ -355,7 +355,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public CompoundTag getTileData() {
+	public CompoundTag getPersistentData() {
 		CompoundTag nbt = new CompoundTag();
 		this.saveAdditional(nbt);
 		return nbt;

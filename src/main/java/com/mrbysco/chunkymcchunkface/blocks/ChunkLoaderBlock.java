@@ -8,8 +8,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -121,10 +119,10 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter blockGetter, List<Component> components, TooltipFlag flag) {
 		super.appendHoverText(stack, blockGetter, components, flag);
-		components.add(new TextComponent("Chunk Loader").withStyle(ChatFormatting.YELLOW));
-		components.add(new TextComponent(" "));
+		components.add(Component.literal("Chunk Loader").withStyle(ChatFormatting.YELLOW));
+		components.add(Component.literal(" "));
 		if (Screen.hasShiftDown()) {
-			components.add(new TranslatableComponent("chunkymcchunkface.extend.text").withStyle(ChatFormatting.GOLD));
+			components.add(Component.translatable("chunkymcchunkface.extend.text").withStyle(ChatFormatting.GOLD));
 			//Get a random block from the ChunkyTags.UPGRADE_BLOCKS tag every 2 seconds and get the translation key
 			var tags = ForgeRegistries.BLOCKS.tags();
 			if (tags != null) {
@@ -132,13 +130,13 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 				if (tag.size() > 0) {
 					int index = (int) (System.currentTimeMillis() / 1000 % tag.size());
 					Block randomBlock = (Block) tag.stream().toArray()[index];
-					Component blockName = new TranslatableComponent(randomBlock.getDescriptionId()).withStyle(ChatFormatting.WHITE);
-					components.add(new TranslatableComponent("chunkymcchunkface.blocks.text", blockName).withStyle(ChatFormatting.GREEN));
+					Component blockName = Component.translatable(randomBlock.getDescriptionId()).withStyle(ChatFormatting.WHITE);
+					components.add(Component.translatable("chunkymcchunkface.blocks.text", blockName).withStyle(ChatFormatting.GREEN));
 				}
 			}
 
 		} else {
-			components.add(new TranslatableComponent("chunkymcchunkface.shift.text").withStyle(ChatFormatting.GRAY));
+			components.add(Component.translatable("chunkymcchunkface.shift.text").withStyle(ChatFormatting.GRAY));
 		}
 	}
 }

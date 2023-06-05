@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class PlayerHandler {
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		Level level = player.level;
 		if (!level.isClientSide) {
 			ChunkData data = ChunkData.get(level);
@@ -20,7 +20,7 @@ public class PlayerHandler {
 
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		Level level = player.level;
 		if (!level.isClientSide) {
 			ChunkData data = ChunkData.get(level);

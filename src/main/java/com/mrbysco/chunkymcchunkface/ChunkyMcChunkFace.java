@@ -41,6 +41,7 @@ public class ChunkyMcChunkFace {
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			eventBus.addListener(ClientHandler::onClientSetup);
+			eventBus.addListener(ClientHandler::registerKeyMappings);
 			eventBus.addListener(ClientHandler::registerEntityRenders);
 			MinecraftForge.EVENT_BUS.addListener(KeyHandler::onClientTick);
 		});
