@@ -30,7 +30,6 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 	public static boolean renderChunkRadius = false;
 
 	public final Map<Long, Integer> rangeMap = new HashMap<>();
-	public final Map<Long, List<ChunkPos>> chunkPosMap = new HashMap<>();
 
 	public ChunkLoaderBER(BlockEntityRendererProvider.Context context) {
 
@@ -55,20 +54,9 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 
 			if (!rangeMap.containsKey(posLong)) {
 				rangeMap.put(posLong, blockEntity.getRange());
-				var list = ChunkyHelper.generateChunkPosList(centerChunk, blockEntity.getRange()).stream().map(ChunkPos::new).toList();
-				List<ChunkPos> poslist = chunkPosMap.getOrDefault(posLong, new ArrayList<>());
-				poslist.addAll(list);
-				chunkPosMap.put(posLong, poslist);
-			} else {
-				if (rangeMap.get(posLong) != blockEntity.getRange()) {
-					var list = ChunkyHelper.generateChunkPosList(centerChunk, blockEntity.getRange()).stream().map(ChunkPos::new).toList();
-					List<ChunkPos> poslist = chunkPosMap.getOrDefault(posLong, new ArrayList<>());
-					poslist.clear();
-					poslist.addAll(list);
-					chunkPosMap.put(posLong, poslist);
-				}
 			}
-			List<ChunkPos> list = chunkPosMap.getOrDefault(posLong, new ArrayList<>());
+			List<ChunkPos> list = ChunkyHelper.generateChunkPosList(centerChunk, blockEntity.getRange()).stream().map(ChunkPos::new).toList();
+
 			if (list.isEmpty()) return;
 
 			List<AABB> boxes = new ArrayList<>();
