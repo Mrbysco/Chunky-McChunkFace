@@ -1,1 +1,1 @@
-* Adjust the texture of the glass
+* Fix range desync (client-side) when replacing the chunk loader
