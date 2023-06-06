@@ -1,1 +1,1 @@
-* Initial update to 1.19.2
+* Fix range desync (client-side) when replacing the chunk loader
