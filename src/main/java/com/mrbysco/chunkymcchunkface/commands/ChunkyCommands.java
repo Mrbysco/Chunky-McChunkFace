@@ -90,7 +90,7 @@ public class ChunkyCommands {
 		}
 
 		if (positions.isEmpty()) {
-			ctx.getSource().sendSuccess(
+			ctx.getSource().sendSuccess(() ->
 					Component.translatable("chunkymcchunkface.command.list.empty",
 							Component.literal(dimension.toString()).withStyle(ChatFormatting.RED)), true);
 		} else {
@@ -108,7 +108,7 @@ public class ChunkyCommands {
 					formattedComponent.append(component);
 			}
 
-			ctx.getSource().sendSuccess(
+			ctx.getSource().sendSuccess(() ->
 					Component.translatable("chunkymcchunkface.command.list",
 									Component.literal(dimension.toString()).withStyle(ChatFormatting.GOLD))
 							.append(formattedComponent), true);
@@ -129,9 +129,9 @@ public class ChunkyCommands {
 		if (dimensionLevel.getBlockEntity(BlockPos.containing(pos)) instanceof ChunkLoaderBlockEntity loader) {
 			loader.disableChunkLoaderState();
 			loader.disableChunkLoader();
-			ctx.getSource().sendSuccess(Component.translatable("chunkymcchunkface.command.disable", pos.x, pos.y, pos.z), true);
+			ctx.getSource().sendSuccess(() -> Component.translatable("chunkymcchunkface.command.disable", pos.x, pos.y, pos.z), true);
 		} else {
-			ctx.getSource().sendSuccess(Component.translatable("chunkymcchunkface.command.disable.error", pos.x, pos.y, pos.z), true);
+			ctx.getSource().sendSuccess(() -> Component.translatable("chunkymcchunkface.command.disable.error", pos.x, pos.y, pos.z), true);
 		}
 		return 0;
 	}
@@ -150,7 +150,7 @@ public class ChunkyCommands {
 		List<BlockPos> positions = data.getActivePositions(dimensionLevel, data.generateList(dimension));
 		MutableComponent dimensionComponent = Component.literal(dimension.toString()).withStyle(ChatFormatting.GOLD);
 		if (positions.isEmpty()) {
-			ctx.getSource().sendSuccess(Component.translatable("chunkymcchunkface.command.disableall.empty", dimensionComponent), true);
+			ctx.getSource().sendSuccess(() -> Component.translatable("chunkymcchunkface.command.disableall.empty", dimensionComponent), true);
 		} else {
 			for (BlockPos pos : positions) {
 				if (dimensionLevel.getBlockEntity(new BlockPos(pos)) instanceof ChunkLoaderBlockEntity loader) {
@@ -158,7 +158,7 @@ public class ChunkyCommands {
 					loader.disableChunkLoader();
 				}
 			}
-			ctx.getSource().sendSuccess(Component.translatable("chunkymcchunkface.command.disableall", dimensionComponent), true);
+			ctx.getSource().sendSuccess(() -> Component.translatable("chunkymcchunkface.command.disableall", dimensionComponent), true);
 		}
 
 		return 0;

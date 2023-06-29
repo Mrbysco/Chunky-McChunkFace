@@ -28,5 +28,6 @@
     "recipes": [
       "chunkymcchunkface:chunk_loader"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
