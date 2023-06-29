@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[45,)"
 issueTrackerURL="https://github.com/Mrbysco/Chunky-McChunkFace/issues"
 license="MIT"
 
@@ -16,12 +16,12 @@ A mod that adds chunkloaders that can be activated to stay active for as long as
 [[dependencies.chunkymcchunkface]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.19.3,1.19.4)"
+versionRange="[1.19.4,1.20)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.chunkymcchunkface]]
 modId="forge"
 mandatory=true
-versionRange="[44.1.0,)"
+versionRange="[45.1.0,)"
 ordering="NONE"
 side="BOTH"

@@ -126,7 +126,7 @@ public class ChunkyCommands {
 	private static int disableChunkLoader(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		ServerLevel dimensionLevel = DimensionArgument.getDimension(ctx, "dimension");
 		Vec3 pos = Vec3Argument.getVec3(ctx, "position");
-		if (dimensionLevel.getBlockEntity(new BlockPos(pos)) instanceof ChunkLoaderBlockEntity loader) {
+		if (dimensionLevel.getBlockEntity(BlockPos.containing(pos)) instanceof ChunkLoaderBlockEntity loader) {
 			loader.disableChunkLoaderState();
 			loader.disableChunkLoader();
 			ctx.getSource().sendSuccess(Component.translatable("chunkymcchunkface.command.disable", pos.x, pos.y, pos.z), true);

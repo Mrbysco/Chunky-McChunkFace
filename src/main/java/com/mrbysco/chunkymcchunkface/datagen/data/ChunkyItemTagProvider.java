@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 public class ChunkyItemTagProvider extends ItemTagsProvider {
 	public ChunkyItemTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
 								 TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper) {
-		super(output, lookupProvider, blockTagProvider, ChunkyMcChunkFace.MOD_ID, existingFileHelper);
+		super(output, lookupProvider, blockTagProvider.contentsGetter(), ChunkyMcChunkFace.MOD_ID, existingFileHelper);
 	}
 
 	@Override
