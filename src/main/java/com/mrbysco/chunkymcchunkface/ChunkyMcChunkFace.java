@@ -8,9 +8,11 @@ import com.mrbysco.chunkymcchunkface.commands.ChunkyCommands;
 import com.mrbysco.chunkymcchunkface.config.ChunkyConfig;
 import com.mrbysco.chunkymcchunkface.handler.PlayerHandler;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.ForgeChunkManager;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -31,6 +33,7 @@ public class ChunkyMcChunkFace {
 		FMLJavaModLoadingContext.get().getModEventBus().register(ChunkyConfig.class);
 
 		eventBus.addListener(this::setup);
+		eventBus.addListener(this::fillCreativeTab);
 
 		ChunkyRegistry.BLOCKS.register(eventBus);
 		ChunkyRegistry.BLOCK_ENTITIES.register(eventBus);
@@ -52,5 +55,10 @@ public class ChunkyMcChunkFace {
 			//Add chunk loading callbacks
 			ForgeChunkManager.setForcedChunkLoadingCallback(MOD_ID, ChunkValidationCallback.INSTANCE);
 		});
+	}
+
+	private void fillCreativeTab(CreativeModeTabEvent.BuildContents event) {
+		if (event.getTab() == CreativeModeTabs.REDSTONE_BLOCKS)
+			event.accept(ChunkyRegistry.CHUNK_LOADER.get());
 	}
 }

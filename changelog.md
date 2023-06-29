@@ -1,1 +1,1 @@
-* Fix range desync (client-side) when replacing the chunk loader
+* Initial 1.19.3 build

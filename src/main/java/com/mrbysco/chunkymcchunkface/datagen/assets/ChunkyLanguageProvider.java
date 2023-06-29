@@ -3,11 +3,12 @@ package com.mrbysco.chunkymcchunkface.datagen.assets;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class ChunkyLanguageProvider extends LanguageProvider {
-	public ChunkyLanguageProvider(DataGenerator gen) {
-		super(gen, ChunkyMcChunkFace.MOD_ID, "en_us");
+	public ChunkyLanguageProvider(PackOutput packOutput) {
+		super(packOutput, ChunkyMcChunkFace.MOD_ID, "en_us");
 	}
 
 	@Override
