@@ -12,7 +12,7 @@
   "chunkymcchunkface.waila.time.disabled": "Timer has been disabled in config",
   "chunkymcchunkface.waila.time.online": "Player is online, timer is not active",
   "chunkymcchunkface.waila.time.remaining": "Time left: %s second(s)",
-  "config.waila.plugin_chunkymcchunkface.show_time": "Show time left",
+  "config.jade.plugin_chunkymcchunkface.show_time": "Show time left",
   "key.chunkymcchunkface.category": "Chunky McChunkFace",
   "key.chunkymcchunkface.show_bounds": "Show Chunk Loader Radius"
 }
