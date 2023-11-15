@@ -1,1 +1,2 @@
-* Initial 1.19.4 build
+* Stop checking offline time if `offlineTime` is set to 0
+* Add Jade support
