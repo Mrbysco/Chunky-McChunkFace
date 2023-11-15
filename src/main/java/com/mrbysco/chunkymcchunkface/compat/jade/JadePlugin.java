@@ -36,7 +36,7 @@ public class JadePlugin implements IWailaPlugin {
 
 		@Override
 		public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig pluginConfig) {
-			if (pluginConfig.get(SHOW_TIME) && blockAccessor.getBlockEntity() instanceof ChunkLoaderBlockEntity blockEntity) {
+			if (pluginConfig.get(SHOW_TIME) && blockAccessor.getBlockEntity() instanceof ChunkLoaderBlockEntity blockEntity && blockEntity.isEnabled()) {
 				if (blockEntity.getPlayerOnlineCache()) {
 					tooltip.add(new TranslatableComponent("chunkymcchunkface.waila.time.online"));
 				} else {
