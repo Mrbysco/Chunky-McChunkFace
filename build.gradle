@@ -112,7 +112,7 @@ dependencies {
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
-    implementation fg.deobf("curse.maven:jade-324717:4800837")
+    implementation fg.deobf("curse.maven:jade-324717:4800904")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
