@@ -33,6 +33,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	private final List<UUID> playerCache = new ArrayList<>();
 	protected final LongSet loadedChunks = new LongOpenHashSet();
 	private int cooldown = 0;
+	private boolean playerOnline = false;
+	private long lastSeen = 0l;
 
 	public ChunkLoaderBlockEntity(BlockPos pos, BlockState state) {
 		super(ChunkyRegistry.CHUNK_LOADER_ENTITY.get(), pos, state);
@@ -57,20 +59,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 				blockEntity.disableChunkLoaderState();
 				blockEntity.disableChunkLoader();
 			} else {
-				boolean isPlayerOnline = false;
-				long latestTime = 0;
-				for (UUID uuid : blockEntity.playerCache) {
-					if (level.getPlayerByUUID(uuid) != null) {
-						isPlayerOnline = true;
-					}
-
-					Player player = level.getPlayerByUUID(uuid);
-					ChunkData data = ChunkData.get(level);
-					long lastSeen = player != null ? level.getGameTime() : data.getLastSeen(uuid);
-					if (lastSeen > latestTime) {
-						latestTime = lastSeen;
-					}
-				}
+				boolean isPlayerOnline = blockEntity.isPlayerOnline();
+				long latestTime = blockEntity.getLastSeen();
 
 				if (!isPlayerOnline) {
 //						ChunkyMcChunkFace.LOGGER.info("Current time {}", level.getGameTime());
@@ -93,6 +83,41 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		if (blockEntity.cooldown > 0) {
 			blockEntity.cooldown--;
 		}
+	}
+
+	public long getLastSeen() {
+		long latestTime = 0;
+		for (UUID uuid : playerCache) {
+			Player player = level.getPlayerByUUID(uuid);
+			ChunkData data = ChunkData.get(level);
+			long lastSeen = player != null ? level.getGameTime() : data.getLastSeen(uuid);
+			if (lastSeen > latestTime) {
+				latestTime = lastSeen;
+			}
+		}
+		this.lastSeen = latestTime;
+		return latestTime;
+	}
+
+	public long getLastSeenCache() {
+		return this.lastSeen;
+	}
+
+	public boolean isPlayerOnline() {
+		boolean isPlayerOnline = false;
+		for (UUID uuid : playerCache) {
+			if (level.getPlayerByUUID(uuid) != null) {
+				isPlayerOnline = true;
+
+			}
+		}
+		this.playerOnline = isPlayerOnline;
+
+		return isPlayerOnline;
+	}
+
+	public boolean getPlayerOnlineCache() {
+		return this.playerOnline;
 	}
 
 	/**
@@ -321,6 +346,9 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 			CompoundTag cacheTag = playerCacheTag.getCompound(j);
 			playerCache.add(cacheTag.getUUID("UUID"));
 		}
+
+		this.lastSeen = tag.getLong("lastSeen");
+		this.playerOnline = tag.getBoolean("playerOnline");
 	}
 
 	protected void saveAdditional(CompoundTag tag) {
@@ -328,6 +356,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		tag.putInt("Levels", this.tier);
 		tag.putInt("Cooldown", this.cooldown);
 		tag.putLongArray("loadedChunks", loadedChunks.toLongArray());
+		tag.putLong("lastSeen", this.lastSeen);
+		tag.putBoolean("playerOnline", this.playerOnline);
 
 		ListTag playerCacheTag = new ListTag();
 		for (UUID uuid : playerCache) {

@@ -27,5 +27,10 @@ public class ChunkyLanguageProvider extends LanguageProvider {
 
 		add("key.chunkymcchunkface.category", "Chunky McChunkFace");
 		add("key.chunkymcchunkface.show_bounds", "Show Chunk Loader Radius");
+
+		add("config.waila.plugin_chunkymcchunkface.show_time", "Show time left");
+		add("chunkymcchunkface.waila.time.online", "Player is online, timer is not active");
+		add("chunkymcchunkface.waila.time.remaining", "Time left: %s second(s)");
+		add("chunkymcchunkface.waila.time.disabled", "Timer has been disabled in config");
 	}
 }
