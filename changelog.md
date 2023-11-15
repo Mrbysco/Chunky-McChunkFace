@@ -1,2 +1,1 @@
-* Stop checking offline time if `offlineTime` is set to 0
-* Add Jade support
+* Only show time left on Chunk Loaders that are active (Jade support)
