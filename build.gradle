@@ -26,10 +26,10 @@ minecraft {
 
     runs {
         client {
-			workingDirectory project.file('run')
+            workingDirectory project.file('run')
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-			
+
             // Recommended logging data for a userdev environment
             // property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.markers', 'REGISTRIES'
@@ -48,7 +48,7 @@ minecraft {
         }
 
         server {
-			workingDirectory project.file('run')
+            workingDirectory project.file('run')
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
@@ -70,7 +70,7 @@ minecraft {
         }
 
         data {
-			workingDirectory project.file('run')
+            workingDirectory project.file('run')
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
@@ -97,18 +97,26 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-	maven {
+    maven {
         url = "https://maven.blamejared.com"
-	}
+    }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-	
-	compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+
+    implementation fg.deobf("curse.maven:jade-324717:4801177")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
