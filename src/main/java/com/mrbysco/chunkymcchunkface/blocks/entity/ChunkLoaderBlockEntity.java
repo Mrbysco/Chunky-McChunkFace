@@ -77,7 +77,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 //						ChunkyMcChunkFace.LOGGER.info("Player interaction time {}", latestTime);
 //						ChunkyMcChunkFace.LOGGER.info("Difference {}", (level.getGameTime() - latestTime));
 					int configuredTicks = ChunkyConfig.COMMON.offlineTime.get();
-					if (latestTime > 0 && (level.getGameTime() - latestTime) > configuredTicks) {
+					if (configuredTicks != 0 && latestTime > 0 && (level.getGameTime() - latestTime) > configuredTicks) {
 						ChunkyMcChunkFace.LOGGER.info("ChunkLoader at {} has been disabled due to inactivity of the players {}", pos, ChunkyHelper.formatTicks(configuredTicks));
 						blockEntity.disableChunkLoaderState();
 						blockEntity.disableChunkLoader();
