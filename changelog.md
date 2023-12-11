@@ -1,2 +1,1 @@
-* Stop checking offline time if `offlineTime` is set to 0
-* Add Jade support
+* Initial update to 1.20.2 (NeoForge)
