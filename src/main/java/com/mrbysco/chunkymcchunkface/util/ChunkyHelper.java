@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.common.world.ForgeChunkManager;
 
 public class ChunkyHelper {
 
@@ -41,7 +40,7 @@ public class ChunkyHelper {
 	 */
 	public static void registerChunkTicket(ServerLevel serverLevel, BlockPos ownerPos, long chunkPos) {
 //		ChunkyMcChunkFace.LOGGER.info("Chunk Loader at {} will now force chunk {} to stay loaded", ownerPos, chunkPos);
-		ForgeChunkManager.forceChunk(serverLevel, ChunkyMcChunkFace.MOD_ID, ownerPos, (int) chunkPos, (int) (chunkPos >> 32), true, true);
+		ChunkyMcChunkFace.CONTROLLER.forceChunk(serverLevel, ownerPos, (int) chunkPos, (int) (chunkPos >> 32), true, true);
 	}
 
 	/**
@@ -53,7 +52,7 @@ public class ChunkyHelper {
 	 */
 	public static void releaseChunkTicket(ServerLevel serverLevel, BlockPos ownerPos, long chunkPos) {
 //		ChunkyMcChunkFace.LOGGER.info("Chunk Loader at {} will now force chunk {} to stay loaded", ownerPos, chunkPos);
-		ForgeChunkManager.forceChunk(serverLevel, ChunkyMcChunkFace.MOD_ID, ownerPos, (int) chunkPos, (int) (chunkPos >> 32), false, true);
+		ChunkyMcChunkFace.CONTROLLER.forceChunk(serverLevel, ownerPos, (int) chunkPos, (int) (chunkPos >> 32), false, true);
 	}
 
 	/**

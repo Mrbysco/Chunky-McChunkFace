@@ -3,9 +3,9 @@ package com.mrbysco.chunkymcchunkface.handler;
 import com.mrbysco.chunkymcchunkface.data.ChunkData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public class PlayerHandler {
 	@SubscribeEvent

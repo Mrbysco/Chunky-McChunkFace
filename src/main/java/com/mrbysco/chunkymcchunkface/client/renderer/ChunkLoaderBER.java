@@ -190,6 +190,11 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 	}
 
 	@Override
+	public AABB getRenderBoundingBox(ChunkLoaderBlockEntity blockEntity) {
+		return INFINITE_EXTENT_AABB;
+	}
+
+	@Override
 	public int getViewDistance() {
 		return 128;
 	}

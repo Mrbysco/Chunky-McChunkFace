@@ -4,8 +4,8 @@ import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class ChunkyItemModelProvider extends ItemModelProvider {
 	public ChunkyItemModelProvider(PackOutput packOutput, ExistingFileHelper helper) {

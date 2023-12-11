@@ -7,6 +7,7 @@ import com.mrbysco.chunkymcchunkface.registry.ChunkyTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,8 +27,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -124,12 +124,12 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 		if (Screen.hasShiftDown()) {
 			components.add(Component.translatable("chunkymcchunkface.extend.text").withStyle(ChatFormatting.GOLD));
 			//Get a random block from the ChunkyTags.UPGRADE_BLOCKS tag every 2 seconds and get the translation key
-			var tags = ForgeRegistries.BLOCKS.tags();
-			if (tags != null) {
-				var tag = tags.getTag(ChunkyTags.UPGRADE_BLOCKS);
+			var optionalTag = BuiltInRegistries.BLOCK.getTag(ChunkyTags.UPGRADE_BLOCKS);
+			if (optionalTag.isPresent()) {
+				var tag = optionalTag.get();
 				if (tag.size() > 0) {
 					int index = (int) (System.currentTimeMillis() / 1000 % tag.size());
-					Block randomBlock = (Block) tag.stream().toArray()[index];
+					Block randomBlock = tag.stream().toList().get(index).value();
 					Component blockName = Component.translatable(randomBlock.getDescriptionId()).withStyle(ChatFormatting.WHITE);
 					components.add(Component.translatable("chunkymcchunkface.blocks.text", blockName).withStyle(ChatFormatting.GREEN));
 				}

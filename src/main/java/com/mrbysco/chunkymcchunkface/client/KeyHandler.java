@@ -3,7 +3,7 @@ package com.mrbysco.chunkymcchunkface.client;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.client.renderer.ChunkLoaderBER;
 import net.minecraft.client.KeyMapping;
-import net.minecraftforge.event.TickEvent;
+import net.neoforged.neoforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyHandler {

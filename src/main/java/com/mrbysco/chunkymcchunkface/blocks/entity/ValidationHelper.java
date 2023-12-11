@@ -1,6 +1,5 @@
 package com.mrbysco.chunkymcchunkface.blocks.entity;
 
-import com.mojang.datafixers.util.Pair;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
@@ -12,34 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.world.ForgeChunkManager;
+import net.neoforged.neoforge.common.world.chunk.TicketHelper;
 
-import java.util.Map;
-
-//Copied from Mekanism <3 https://github.com/mekanism/Mekanism/blob/1.18.x/src/main/java/mekanism/common/tile/component/TileComponentChunkLoader.java#LL228-L228C87
-public class ChunkValidationCallback implements ForgeChunkManager.LoadingValidationCallback {
-	public static final ChunkValidationCallback INSTANCE = new ChunkValidationCallback();
-
-	private ChunkValidationCallback() {
-	}
-
-	@Override
-	public void validateTickets(ServerLevel serverLevel, ForgeChunkManager.TicketHelper ticketHelper) {
-		ResourceLocation dimensionLocation = serverLevel.dimension().location();
-
-		for (Map.Entry<BlockPos, Pair<LongSet, LongSet>> entry : ticketHelper.getBlockTickets().entrySet()) {
-			//Only bother looking at non ticking chunks as we don't register any "fully" ticking chunks
-			BlockPos pos = entry.getKey();
-			LongSet forcedChunks = entry.getValue().getFirst();
-			LongSet tickingForcedChunks = entry.getValue().getSecond();
-
-			validateTickets(serverLevel, dimensionLocation, pos, ticketHelper, forcedChunks, false);
-			validateTickets(serverLevel, dimensionLocation, pos, ticketHelper, tickingForcedChunks, true);
-		}
-	}
-
-	private void validateTickets(ServerLevel serverLevel, ResourceLocation dimensionLocation, BlockPos pos,
-								 ForgeChunkManager.TicketHelper ticketHelper, LongSet forcedChunks, boolean ticking) {
+public class ValidationHelper {
+	public static void validateTickets(ServerLevel serverLevel, ResourceLocation dimensionLocation, BlockPos pos,
+									   TicketHelper ticketHelper, LongSet forcedChunks, boolean ticking) {
 		int ticketCount = forcedChunks.size();
 		if (ticketCount > 0) {
 			//We expect this always be the case but just in case it is empty don't bother looking up the tile
@@ -80,17 +56,6 @@ public class ChunkValidationCallback implements ForgeChunkManager.LoadingValidat
 								removed++;
 							}
 						}
-						//And add any that are valid now that weren't before
-						// Note: We can safely call forceChunk here as nothing is iterating the list of forced chunks
-						// as the loading validators get past a
-						for (long chunkPos : chunks) {
-							if (blockEntity.loadedChunks.add(chunkPos) || ticking != blockEntity.isEnabled()) {
-								//If we didn't already have it in our chunk set and added, or we had removed it due to it fully ticking changing,
-								// then we also need to force the chunk
-								ForgeChunkManager.forceChunk(serverLevel, ChunkyMcChunkFace.MOD_ID, pos, (int) chunkPos, (int) (chunkPos >> 32), true, true);
-								added++;
-							}
-						}
 
 						//Mark the chunk loader as being initialized
 						if (removed == 0 && added == 0) {
@@ -110,10 +75,9 @@ public class ChunkValidationCallback implements ForgeChunkManager.LoadingValidat
 				}
 			}
 		}
-
 	}
 
-	private void releaseAllTickets(ChunkLoaderBlockEntity blockEntity, BlockPos pos, ForgeChunkManager.TicketHelper ticketHelper) {
+	private static void releaseAllTickets(ChunkLoaderBlockEntity blockEntity, BlockPos pos, TicketHelper ticketHelper) {
 		//Release all tickets associated with the chunk loader
 		ticketHelper.removeAllTickets(pos);
 		blockEntity.loadedChunks.clear();

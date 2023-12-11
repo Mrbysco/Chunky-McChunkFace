@@ -3,7 +3,7 @@ package com.mrbysco.chunkymcchunkface.datagen.assets;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class ChunkyLanguageProvider extends LanguageProvider {
 	public ChunkyLanguageProvider(PackOutput packOutput) {

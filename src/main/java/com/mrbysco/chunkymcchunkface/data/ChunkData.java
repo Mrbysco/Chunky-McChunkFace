@@ -212,6 +212,6 @@ public class ChunkData extends SavedData {
 		ServerLevel overworld = level.getServer().overworld();
 
 		DimensionDataStorage storage = overworld.getDataStorage();
-		return storage.computeIfAbsent(ChunkData::load, ChunkData::new, DATA_NAME);
+		return storage.computeIfAbsent(new Factory<>(ChunkData::new, ChunkData::load), DATA_NAME);
 	}
 }
