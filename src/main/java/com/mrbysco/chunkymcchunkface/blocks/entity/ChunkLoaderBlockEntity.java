@@ -34,7 +34,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	protected final LongSet loadedChunks = new LongOpenHashSet();
 	private int cooldown = 0;
 	private boolean playerOnline = false;
-	private long lastSeen = 0l;
+	private long lastSeen = 0L;
 
 	public ChunkLoaderBlockEntity(BlockPos pos, BlockState state) {
 		super(ChunkyRegistry.CHUNK_LOADER_ENTITY.get(), pos, state);
