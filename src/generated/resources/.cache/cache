@@ -5,3 +5,4 @@ b854522b9a0f373937bef58477504b3e6e409cc4 assets/chunkymcchunkface/models/item/ch
 401a42ed7df6ab1f8d311efefcf2a438d7d82aa7 data/chunkymcchunkface/loot_tables/blocks/chunk_loader.json
 72b65501ac682b26b10195143bf56f041d89b53c data/chunkymcchunkface/recipes/chunk_loader.json
 924e8e7c03560f0a5a7eb9e9326b8794f07339de data/chunkymcchunkface/tags/blocks/upgrade_blocks.json
+3a22d28f848c6848ef092637419e83d67503210c data/forge/tags/blocks/relocation_not_supported.json

@@ -1,4 +1,5 @@
 {
+  "replace": false,
   "values": [
     "chunkymcchunkface:chunk_loader"
   ]
