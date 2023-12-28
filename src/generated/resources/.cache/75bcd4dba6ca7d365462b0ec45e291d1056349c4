@@ -1,2 +1,3 @@
-// 1.19.2	2023-06-05T19:24:20.6183271	Tags for minecraft:block
+// 1.19.2	2023-12-28T19:17:53.0959949	Tags for minecraft:block
 bfac0fa56d115d74f4efa2edea6b442eca2ee485 data/chunkymcchunkface/tags/blocks/upgrade_blocks.json
+4abea3232900de3eff63d302b09a7a3e4793e2ad data/forge/tags/blocks/relocation_not_supported.json
