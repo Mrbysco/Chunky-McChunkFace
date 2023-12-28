@@ -1,1 +1,1 @@
-* Only show time left on Chunk Loaders that are active (Jade support)
+* Stop the Chunk Loader from being move-able
