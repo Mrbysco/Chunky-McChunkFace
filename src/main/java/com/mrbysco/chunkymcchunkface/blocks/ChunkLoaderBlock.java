@@ -1,5 +1,6 @@
 package com.mrbysco.chunkymcchunkface.blocks;
 
+import com.mojang.serialization.MapCodec;
 import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkLoaderBlockEntity;
 import com.mrbysco.chunkymcchunkface.data.ChunkData;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
@@ -33,7 +34,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ChunkLoaderBlock extends BaseEntityBlock {
+	public static final MapCodec<ChunkLoaderBlock> CODEC = simpleCodec(ChunkLoaderBlock::new);
 	public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
+
+	@Override
+	public MapCodec<ChunkLoaderBlock> codec() {
+		return CODEC;
+	}
 
 	public ChunkLoaderBlock(Properties properties) {
 		super(properties);
