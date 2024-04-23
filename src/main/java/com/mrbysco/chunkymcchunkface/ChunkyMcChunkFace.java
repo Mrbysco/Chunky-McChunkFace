@@ -16,7 +16,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
@@ -48,10 +47,9 @@ public class ChunkyMcChunkFace {
 			}
 	);
 
-	public ChunkyMcChunkFace() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public ChunkyMcChunkFace(IEventBus eventBus) {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ChunkyConfig.commonSpec, "ChunkyMcChunkFace-common.toml");
-		FMLJavaModLoadingContext.get().getModEventBus().register(ChunkyConfig.class);
+		eventBus.register(ChunkyConfig.class);
 
 		eventBus.addListener(this::registerTicketController);
 		eventBus.addListener(this::fillCreativeTab);

@@ -1,9 +1,7 @@
 package com.mrbysco.chunkymcchunkface.datagen.data;
 
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -11,12 +9,9 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-
 public class ChunkyRecipeProvider extends RecipeProvider {
-	public ChunkyRecipeProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-		super(packOutput, lookupProvider);
+	public ChunkyRecipeProvider(PackOutput packOutput) {
+		super(packOutput);
 	}
 
 	@Override
