@@ -3,16 +3,16 @@
   "category": "redstone",
   "key": {
     "E": {
-      "tag": "forge:nether_stars"
+      "tag": "c:nether_stars"
     },
     "G": {
       "item": "minecraft:gold_block"
     },
     "O": {
-      "tag": "forge:obsidian"
+      "tag": "c:obsidians"
     },
     "W": {
-      "tag": "forge:glass"
+      "tag": "c:glass_blocks"
     }
   },
   "pattern": [
@@ -21,7 +21,7 @@
     "GOG"
   ],
   "result": {
-    "item": "chunkymcchunkface:chunk_loader"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "chunkymcchunkface:chunk_loader"
+  }
 }

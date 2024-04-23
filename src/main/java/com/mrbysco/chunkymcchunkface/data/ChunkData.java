@@ -6,6 +6,7 @@ import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -151,7 +152,7 @@ public class ChunkData extends SavedData {
 		this.setDirty();
 	}
 
-	public static ChunkData load(CompoundTag tag) {
+	public static ChunkData load(CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag loaderMapTag = tag.getList("ChunkLoaderMap", CompoundTag.TAG_COMPOUND);
 		Map<ResourceLocation, LongSet> loaderMap = new HashMap<>();
 
@@ -181,7 +182,7 @@ public class ChunkData extends SavedData {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag tag) {
+	public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag loaderMapTag = new ListTag();
 		for (Map.Entry<ResourceLocation, LongSet> entry : chunkloaderMap.entrySet()) {
 			CompoundTag loaderTag = new CompoundTag();

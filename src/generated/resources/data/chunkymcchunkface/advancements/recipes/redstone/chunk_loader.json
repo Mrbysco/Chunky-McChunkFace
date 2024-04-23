@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ender_pearls"
+            "items": "#c:ender_pearls"
           }
         ]
       },
@@ -28,6 +28,5 @@
     "recipes": [
       "chunkymcchunkface:chunk_loader"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

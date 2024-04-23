@@ -16,12 +16,12 @@ A mod that adds chunkloaders that can be activated to stay active for as long as
 [[dependencies.chunkymcchunkface]]
 modId="minecraft"
 type="required"
-versionRange="[1.20.4,1.21)"
+versionRange="[1.20.5,1.21)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.chunkymcchunkface]]
 modId="neoforge"
 type="required"
-versionRange="[20.4.167,)"
+versionRange="[20.5.0-beta,)"
 ordering="NONE"
 side="BOTH"

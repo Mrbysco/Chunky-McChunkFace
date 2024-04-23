@@ -37,7 +37,7 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 
 	@Override
 	public void render(ChunkLoaderBlockEntity blockEntity, float partialTicks, PoseStack poseStack,
-					   MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
+	                   MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
 		final Minecraft mc = Minecraft.getInstance();
 		final LocalPlayer player = mc.player;
 
@@ -108,40 +108,40 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 		Matrix3f normal = matrixLast.normal();
 
 		//render the bottom of the box
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.minZ).normal(normal, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.minZ).normal(normal, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.maxZ).normal(normal, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.maxZ).normal(normal, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.minZ).normal(matrixLast, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.minZ).normal(matrixLast, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.maxZ).normal(matrixLast, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.maxZ).normal(matrixLast, 0.0F, 1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
 
 		//render the top of the box
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.minZ).normal(normal, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.maxZ).normal(normal, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.maxZ).normal(normal, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.minZ).normal(normal, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.minZ).normal(matrixLast, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.maxZ).normal(matrixLast, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.maxZ).normal(matrixLast, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.minZ).normal(matrixLast, 0.0F, -1.0F, 0.0F).color(red, green, blue, alpha).endVertex();
 
 		//render the north side of the box
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.minZ).normal(normal, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.minZ).normal(normal, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.minZ).normal(normal, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.minZ).normal(normal, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.minZ).normal(matrixLast, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.minZ).normal(matrixLast, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.minZ).normal(matrixLast, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.minZ).normal(matrixLast, 0.0F, 0.0F, 1.0F).color(red, green, blue, alphaSide).endVertex();
 
 		//render the south side of the box
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.maxZ).normal(normal, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.maxZ).normal(normal, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.maxZ).normal(normal, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.maxZ).normal(normal, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.maxZ).normal(matrixLast, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.maxZ).normal(matrixLast, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.maxZ).normal(matrixLast, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.maxZ).normal(matrixLast, 0.0F, 0.0F, -1.0F).color(red, green, blue, alphaSide).endVertex();
 
 		//render the west side of the box
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.minZ).normal(normal, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.maxZ).normal(normal, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.maxZ).normal(normal, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.minZ).normal(normal, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.minZ).normal(matrixLast, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.minY, (float) box.maxZ).normal(matrixLast, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.maxZ).normal(matrixLast, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.minX, (float) box.maxY, (float) box.minZ).normal(matrixLast, 1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
 
 		//render the east side of the box
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.minZ).normal(normal, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.minZ).normal(normal, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.maxZ).normal(normal, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
-		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.maxZ).normal(normal, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.minZ).normal(matrixLast, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.minZ).normal(matrixLast, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.maxY, (float) box.maxZ).normal(matrixLast, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
+		vertexConsumer.vertex(pose, (float) box.maxX, (float) box.minY, (float) box.maxZ).normal(matrixLast, -1.0F, 0.0F, 0.0F).color(red, green, blue, alphaSide).endVertex();
 
 		poseStack.popPose();
 	}

@@ -10,6 +10,7 @@ import com.mrbysco.chunkymcchunkface.util.ChunkyHelper;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
@@ -324,8 +325,9 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		}
 	}
 
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	@Override
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.loadAdditional(tag, provider);
 		this.tier = tag.getInt("Levels");
 		this.cooldown = tag.getInt("Cooldown");
 
@@ -350,8 +352,10 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		this.playerOnline = tag.getBoolean("playerOnline");
 	}
 
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	@Override
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.saveAdditional(tag, provider);
+
 		tag.putInt("Levels", this.tier);
 		tag.putInt("Cooldown", this.cooldown);
 		tag.putLongArray("loadedChunks", loadedChunks.toLongArray());
@@ -365,28 +369,29 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 			playerCacheTag.add(cacheTag);
 		}
 		tag.put("playerCache", playerCacheTag);
-
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		load(pkt.getTag());
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
+		if (pkt.getTag() != null)
+			loadAdditional(pkt.getTag(), provider);
 
 		BlockState state = level.getBlockState(getBlockPos());
 		level.sendBlockUpdated(getBlockPos(), state, state, 3);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
+	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
 		CompoundTag nbt = new CompoundTag();
-		this.saveAdditional(nbt);
+		this.saveAdditional(nbt, provider);
 		return nbt;
 	}
 
 	@Override
 	public CompoundTag getPersistentData() {
 		CompoundTag nbt = new CompoundTag();
-		this.saveAdditional(nbt);
+		if (level != null)
+			this.saveAdditional(nbt, level.registryAccess());
 		return nbt;
 	}
 

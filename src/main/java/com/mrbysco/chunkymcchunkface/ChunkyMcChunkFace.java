@@ -12,7 +12,9 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -47,8 +49,8 @@ public class ChunkyMcChunkFace {
 			}
 	);
 
-	public ChunkyMcChunkFace(IEventBus eventBus) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ChunkyConfig.commonSpec, "ChunkyMcChunkFace-common.toml");
+	public ChunkyMcChunkFace(IEventBus eventBus, Dist dist, ModContainer container) {
+		container.registerConfig(ModConfig.Type.COMMON, ChunkyConfig.commonSpec, "ChunkyMcChunkFace-common.toml");
 		eventBus.register(ChunkyConfig.class);
 
 		eventBus.addListener(this::registerTicketController);
@@ -61,7 +63,7 @@ public class ChunkyMcChunkFace {
 		NeoForge.EVENT_BUS.register(new PlayerHandler());
 		NeoForge.EVENT_BUS.register(new ChunkyCommands());
 
-		if (FMLEnvironment.dist.isClient()) {
+		if (dist.isClient()) {
 			eventBus.addListener(ClientHandler::onClientSetup);
 			eventBus.addListener(ClientHandler::registerKeyMappings);
 			eventBus.addListener(ClientHandler::registerEntityRenders);

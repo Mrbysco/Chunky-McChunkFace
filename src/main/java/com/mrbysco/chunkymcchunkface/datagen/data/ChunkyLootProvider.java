@@ -1,10 +1,12 @@
 package com.mrbysco.chunkymcchunkface.datagen.data;
 
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -12,14 +14,14 @@ import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class ChunkyLootProvider extends LootTableProvider {
-	public ChunkyLootProvider(PackOutput packOutput) {
+	public ChunkyLootProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> completableFuture) {
 		super(packOutput, Set.of(), List.of(
 				new SubProviderEntry(ChunkyBlockLoot::new, LootContextParamSets.BLOCK)
-		));
+		), completableFuture);
 	}
 
 	public static class ChunkyBlockLoot extends BlockLootSubProvider {
@@ -39,7 +41,8 @@ public class ChunkyLootProvider extends LootTableProvider {
 	}
 
 	@Override
-	protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationContext) {
-		map.forEach((name, table) -> table.validate(validationContext));
+	protected void validate(WritableRegistry<LootTable> writableRegistry, ValidationContext validationContext,
+	                        ProblemReporter.Collector collector) {
+		super.validate(writableRegistry, validationContext, collector);
 	}
 }
