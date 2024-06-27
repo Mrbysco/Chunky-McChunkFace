@@ -1,1 +1,1 @@
-* Update to support NeoForge **20.5.14-beta** and above 
+* Initial update to 1.21
