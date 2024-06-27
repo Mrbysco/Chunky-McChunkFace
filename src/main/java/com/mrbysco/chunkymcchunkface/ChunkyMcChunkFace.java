@@ -15,10 +15,8 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
@@ -33,7 +31,7 @@ public class ChunkyMcChunkFace {
 	public static final String MOD_ID = "chunkymcchunkface";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final TicketController CONTROLLER = new TicketController(new ResourceLocation(MOD_ID, "default"),
+	public static final TicketController CONTROLLER = new TicketController(ResourceLocation.fromNamespaceAndPath(MOD_ID, "default"),
 			(serverLevel, ticketHelper) -> {
 				ResourceLocation dimensionLocation = serverLevel.dimension().location();
 
@@ -67,6 +65,7 @@ public class ChunkyMcChunkFace {
 			eventBus.addListener(ClientHandler::onClientSetup);
 			eventBus.addListener(ClientHandler::registerKeyMappings);
 			eventBus.addListener(ClientHandler::registerEntityRenders);
+			eventBus.addListener(ClientHandler::onRegisterRenderTypes);
 			NeoForge.EVENT_BUS.addListener(KeyHandler::onClientTick);
 		}
 	}

@@ -84,7 +84,7 @@ public class ValidationHelper {
 
 		BlockState state = blockEntity.getBlockState();
 		if (state.is(ChunkyRegistry.CHUNK_LOADER.get())) {
-			blockEntity.getLevel().setBlockAndUpdate(pos, state.setValue(ChunkLoaderBlock.ENABLED, Boolean.valueOf(false)));
+			blockEntity.getLevel().setBlockAndUpdate(pos, state.setValue(ChunkLoaderBlock.ENABLED, Boolean.FALSE));
 		}
 
 		//Mark the block entity as changed, so it gets saved and updates

@@ -44,7 +44,7 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 
 	public ChunkLoaderBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(ENABLED, Boolean.valueOf(false)));
+		this.registerDefaultState(this.stateDefinition.any().setValue(ENABLED, Boolean.FALSE));
 	}
 
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -63,7 +63,7 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 			if (player instanceof FakePlayer) return InteractionResult.FAIL;
 
 			if (level.getBlockEntity(pos) instanceof ChunkLoaderBlockEntity blockEntity) {
-				level.setBlockAndUpdate(pos, state.setValue(ENABLED, Boolean.valueOf(true)));
+				level.setBlockAndUpdate(pos, state.setValue(ENABLED, Boolean.TRUE));
 				blockEntity.addPlayer(player.getUUID());
 				blockEntity.enableChunkLoading();
 			}
@@ -116,7 +116,7 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 		if (flag && state.getValue(ENABLED)) {
 			if (level.getBlockEntity(pos) instanceof ChunkLoaderBlockEntity blockEntity) {
 				//Disable the chunk loader and clear the player cache
-				level.setBlockAndUpdate(pos, state.setValue(ENABLED, Boolean.valueOf(false)));
+				level.setBlockAndUpdate(pos, state.setValue(ENABLED, Boolean.FALSE));
 				blockEntity.clearPlayerCache();
 				blockEntity.unloadChunks();
 			}

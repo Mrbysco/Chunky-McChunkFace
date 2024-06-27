@@ -132,7 +132,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	 * Change the state to disabled
 	 */
 	public void disableChunkLoaderState() {
-		level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(ChunkLoaderBlock.ENABLED, Boolean.valueOf(false)));
+		level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(ChunkLoaderBlock.ENABLED, Boolean.FALSE));
 	}
 
 	/**

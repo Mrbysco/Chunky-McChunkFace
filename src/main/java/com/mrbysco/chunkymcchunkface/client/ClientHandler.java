@@ -4,9 +4,10 @@ import com.mrbysco.chunkymcchunkface.client.renderer.ChunkLoaderBER;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent;
 
 public class ClientHandler {
 	public static void onClientSetup(final FMLClientSetupEvent event) {
@@ -19,5 +20,10 @@ public class ClientHandler {
 
 	public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerBlockEntityRenderer(ChunkyRegistry.CHUNK_LOADER_ENTITY.get(), ChunkLoaderBER::new);
+	}
+
+	public static void onRegisterRenderTypes(final RegisterRenderBuffersEvent event) {
+		event.registerRenderBuffer(ChunkyRenderTypes.CHUNKY_TRANSLUCENT);
+		event.registerRenderBuffer(ChunkyRenderTypes.CHUNKY_LINE);
 	}
 }
