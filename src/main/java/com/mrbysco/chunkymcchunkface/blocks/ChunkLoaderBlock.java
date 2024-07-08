@@ -47,16 +47,19 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 		this.registerDefaultState(this.stateDefinition.any().setValue(ENABLED, Boolean.FALSE));
 	}
 
+	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new ChunkLoaderBlockEntity(pos, state);
 	}
 
 	@Nullable
+	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
 		return level.isClientSide ? null : createTickerHelper(blockEntityType, ChunkyRegistry.CHUNK_LOADER_ENTITY.get(), ChunkLoaderBlockEntity::serverTick);
 	}
 
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult pHitResult) {
 		if (level.isClientSide) {
 			return InteractionResult.SUCCESS;
 		} else {
@@ -102,10 +105,12 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 		}
 	}
 
+	@Override
 	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.MODEL;
 	}
 
+	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> blockStateBuilder) {
 		blockStateBuilder.add(ENABLED);
 	}
