@@ -1,1 +1,1 @@
-* Initial update to 1.21
+* Fix right-clicking the Chunky McChunkFace not activating the chunk loading
