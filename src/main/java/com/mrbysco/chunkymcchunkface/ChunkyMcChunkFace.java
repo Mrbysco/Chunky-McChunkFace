@@ -17,6 +17,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
@@ -62,6 +64,8 @@ public class ChunkyMcChunkFace {
 		NeoForge.EVENT_BUS.register(new ChunkyCommands());
 
 		if (dist.isClient()) {
+			container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+
 			eventBus.addListener(ClientHandler::onClientSetup);
 			eventBus.addListener(ClientHandler::registerKeyMappings);
 			eventBus.addListener(ClientHandler::registerEntityRenders);
