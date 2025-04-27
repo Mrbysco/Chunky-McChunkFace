@@ -1,1 +1,1 @@
-* Fix right-clicking the Chunky McChunkFace not activating the chunk loading
+* Enable in-game config
