@@ -16,7 +16,7 @@ public class ChunkyPipelines {
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
 			.build();
 
-	public static final RenderPipeline TRANSLUCENT = RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_SNIPPET)
+	public static final RenderPipeline TRANSLUCENT = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
 			.withLocation(ChunkyMcChunkFace.modLoc("pipeline/translucent"))
 			.withVertexShader("core/position_color")
 			.withFragmentShader("core/position_color")

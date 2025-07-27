@@ -1,5 +1,6 @@
 package com.mrbysco.chunkymcchunkface.blocks.entity;
 
+import com.mojang.serialization.Codec;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
 import com.mrbysco.chunkymcchunkface.config.ChunkyConfig;
@@ -12,21 +13,26 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueInput.TypedInputList;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueOutput.TypedOutputList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class ChunkLoaderBlockEntity extends BlockEntity {
@@ -328,10 +334,10 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-		super.loadAdditional(tag, provider);
-		this.tier = tag.getIntOr("Levels", 0);
-		this.cooldown = tag.getIntOr("Cooldown", 0);
+	protected void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		this.tier = input.getIntOr("Levels", 0);
+		this.cooldown = input.getIntOr("Cooldown", 0);
 
 		if (!loadedChunks.isEmpty()) {
 			if (hasLevel()) {
@@ -340,41 +346,37 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 				loadedChunks.clear();
 			}
 		}
-		Optional<long[]> chunks = tag.getLongArray("loadedChunks");
-		if (chunks.isPresent()) {
-			for (long chunk : chunks.get()) {
+		TypedInputList<Long> chunks = input.listOrEmpty("loadedChunks", Codec.LONG);
+		if (!chunks.isEmpty()) {
+			for (long chunk : chunks) {
 				loadedChunks.add(chunk);
 			}
 		}
 
-		ListTag playerCacheTag = tag.getListOrEmpty("playerCache");
-		for (int j = 0; j < playerCacheTag.size(); ++j) {
-			CompoundTag cacheTag = playerCacheTag.getCompoundOrEmpty(j);
-			cacheTag.read("UUID", UUIDUtil.CODEC)
-					.ifPresent(playerCache::add);
-		}
+		TypedInputList<UUID> cache = input.listOrEmpty("loadedChunks", UUIDUtil.CODEC);
+		cache.forEach(playerCache::add);
 
-		this.lastSeen = tag.getLongOr("lastSeen", 0L);
-		this.playerOnline = tag.getBooleanOr("playerOnline", false);
+		this.lastSeen = input.getLongOr("lastSeen", 0L);
+		this.playerOnline = input.getBooleanOr("playerOnline", false);
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-		super.saveAdditional(tag, provider);
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
 
-		tag.putInt("Levels", this.tier);
-		tag.putInt("Cooldown", this.cooldown);
-		tag.putLongArray("loadedChunks", loadedChunks.toLongArray());
-		tag.putLong("lastSeen", this.lastSeen);
-		tag.putBoolean("playerOnline", this.playerOnline);
-
-		ListTag playerCacheTag = new ListTag();
-		for (UUID uuid : playerCache) {
-			CompoundTag cacheTag = new CompoundTag();
-			cacheTag.store("UUID", UUIDUtil.CODEC, uuid);
-			playerCacheTag.add(cacheTag);
+		output.putInt("Levels", this.tier);
+		output.putInt("Cooldown", this.cooldown);
+		TypedOutputList<Long> loadedList = output.list("loadedChunks", Codec.LONG);
+		for (long chunk : loadedChunks) {
+			loadedList.add(chunk);
 		}
-		tag.put("playerCache", playerCacheTag);
+		output.putLong("lastSeen", this.lastSeen);
+		output.putBoolean("playerOnline", this.playerOnline);
+
+		TypedOutputList<UUID> playerCacheList = output.list("playerCache", UUIDUtil.CODEC);
+		for (UUID uuid : playerCache) {
+			playerCacheList.add(uuid);
+		}
 	}
 
 	@Override
@@ -391,27 +393,34 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
-		if (pkt.getTag() != null)
-			loadAdditional(pkt.getTag(), provider);
+	public void onDataPacket(Connection net, ValueInput valueInput) {
+		super.onDataPacket(net, valueInput);
 
 		BlockState state = level.getBlockState(getBlockPos());
 		level.sendBlockUpdated(getBlockPos(), state, state, 3);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-		CompoundTag nbt = new CompoundTag();
-		this.saveAdditional(nbt, provider);
-		return nbt;
+	public CompoundTag getUpdateTag(HolderLookup.Provider lookupProvider) {
+		CompoundTag tag = new CompoundTag();
+		try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(ChunkyMcChunkFace.LOGGER)) {
+			TagValueOutput output = TagValueOutput.createWithContext(problemreporter$scopedcollector, lookupProvider);
+			this.saveAdditional(output);
+			tag.merge(output.buildResult());
+		}
+		return tag;
 	}
 
 	@Override
 	public CompoundTag getPersistentData() {
-		CompoundTag nbt = new CompoundTag();
-		if (level != null)
-			this.saveAdditional(nbt, level.registryAccess());
-		return nbt;
+		CompoundTag tag = new CompoundTag();
+		try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(ChunkyMcChunkFace.LOGGER)) {
+			HolderLookup.Provider lookupProvider = this.level != null ? this.level.registryAccess() : VanillaRegistries.createLookup();
+			TagValueOutput output = TagValueOutput.createWithContext(problemreporter$scopedcollector, lookupProvider);
+			this.saveAdditional(output);
+			tag.merge(output.buildResult());
+		}
+		return tag;
 	}
 
 	@Nullable

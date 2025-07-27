@@ -181,7 +181,7 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 	}
 
 	@Override
-	public boolean shouldRenderOffScreen(ChunkLoaderBlockEntity blockEntity) {
+	public boolean shouldRenderOffScreen() {
 		return true;
 	}
 

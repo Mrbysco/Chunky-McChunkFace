@@ -89,7 +89,7 @@ dependencies {
 
     localRuntime "mezz.jei:jei-${jei_minecraft}-neoforge:${jei_version}"
 
-    implementation "curse.maven:jade-324717:6524708"
+    implementation "curse.maven:jade-324717:6713216"
 }
 
 jar {
