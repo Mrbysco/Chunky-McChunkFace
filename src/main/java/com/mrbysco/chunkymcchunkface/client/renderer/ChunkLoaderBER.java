@@ -8,8 +8,8 @@ import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import com.mrbysco.chunkymcchunkface.util.ChunkyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -62,8 +62,8 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 			for (ChunkPos pos : list) {
 				AABB box = AABB.of(
 						new BoundingBox(
-								pos.getMinBlockX(), mc.level.getMinBuildHeight(), pos.getMinBlockZ(),
-								pos.getMaxBlockX(), mc.level.getMaxBuildHeight(), pos.getMaxBlockZ()
+								pos.getMinBlockX(), mc.level.getMinY(), pos.getMinBlockZ(),
+								pos.getMaxBlockX(), mc.level.getMaxY(), pos.getMaxBlockZ()
 						)
 				);
 				box = box.inflate(0.01F);
@@ -168,7 +168,7 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 		float[] offColor = new float[]{0.5F, 0F, 0.125F, 1.0F};
 
 		float[] colorToUse = blockEntity.isEnabled() ? onColor : offColor;
-		LevelRenderer.renderLineBox(poseStack, builder, box, colorToUse[0], colorToUse[1], colorToUse[2], colorToUse[3]);
+		ShapeRenderer.renderLineBox(poseStack, builder, box, colorToUse[0], colorToUse[1], colorToUse[2], colorToUse[3]);
 
 		if (bufferSource instanceof MultiBufferSource.BufferSource bufferSource1) {
 			bufferSource1.endBatch(ChunkyRenderTypes.CHUNKY_LINE);

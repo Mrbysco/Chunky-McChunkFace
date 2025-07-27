@@ -249,7 +249,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 
 		for (int j = 1; j <= MAX_TIERS; i = j++) {
 			int k = y - j;
-			if (k < level.getMinBuildHeight()) {
+			if (k < level.getMinY()) {
 				break;
 			}
 

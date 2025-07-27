@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -27,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.Nullable;
@@ -115,7 +115,8 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 		blockStateBuilder.add(ENABLED);
 	}
 
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+	@Override
+	protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
 		boolean flag = level.hasNeighborSignal(pos);
 		//Check if the block is powered
 		if (flag && state.getValue(ENABLED)) {
@@ -136,7 +137,7 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 		if (Screen.hasShiftDown()) {
 			components.add(Component.translatable("chunkymcchunkface.extend.text").withStyle(ChatFormatting.GOLD));
 			//Get a random block from the ChunkyTags.UPGRADE_BLOCKS tag every 2 seconds and get the translation key
-			var optionalTag = BuiltInRegistries.BLOCK.getTag(ChunkyTags.UPGRADE_BLOCKS);
+			var optionalTag = BuiltInRegistries.BLOCK.get(ChunkyTags.UPGRADE_BLOCKS);
 			if (optionalTag.isPresent()) {
 				var tag = optionalTag.get();
 				if (tag.size() > 0) {

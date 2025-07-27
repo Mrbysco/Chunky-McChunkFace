@@ -21,11 +21,12 @@ public class ChunkyRegistry {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ChunkyMcChunkFace.MOD_ID);
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ChunkyMcChunkFace.MOD_ID);
 
-	public static final DeferredBlock<ChunkLoaderBlock> CHUNK_LOADER = BLOCKS.register("chunk_loader", () ->
-			new ChunkLoaderBlock(Block.Properties.of().mapColor(MapColor.GOLD).strength(0.8F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.BLOCK)));
+	public static final DeferredBlock<ChunkLoaderBlock> CHUNK_LOADER = BLOCKS.registerBlock("chunk_loader",
+			ChunkLoaderBlock::new, Block.Properties.of().mapColor(MapColor.GOLD).strength(0.8F)
+					.sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.BLOCK));
 
 	public static final Supplier<BlockEntityType<ChunkLoaderBlockEntity>> CHUNK_LOADER_ENTITY = BLOCK_ENTITIES.register("chunk_loader", () ->
-			BlockEntityType.Builder.of(ChunkLoaderBlockEntity::new, CHUNK_LOADER.get()).build(null));
+			new BlockEntityType<>(ChunkLoaderBlockEntity::new, CHUNK_LOADER.get()));
 	public static final DeferredItem<BlockItem> CHUNK_LOADER_ITEM = ITEMS.registerSimpleBlockItem(CHUNK_LOADER);
 
 }
