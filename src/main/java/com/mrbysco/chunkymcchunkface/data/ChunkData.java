@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,17 +39,19 @@ public class ChunkData extends SavedData {
 			ResourceKey.codec(Registries.DIMENSION), LONG_SET
 	);
 	public static final UnboundedMapCodec<UUID, Long> PLAYER_TIME_MAP_CODEC = Codec.unboundedMap(
-			UUIDUtil.CODEC, Codec.STRING.xmap(Long::parseLong, String::valueOf)
+			UUIDUtil.STRING_CODEC, Codec.STRING.xmap(Long::parseLong, String::valueOf)
 	);
 	public static final Codec<ChunkData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(
-					DIMENSION_LOADER_CODEC.optionalFieldOf("ChunkLoaderMap", Map.of()).forGetter(data -> data.chunkloaderMap),
-					PLAYER_TIME_MAP_CODEC.optionalFieldOf("PlayerTimeMap", Map.of()).forGetter(data -> data.playerTimeMap)
+					DIMENSION_LOADER_CODEC.fieldOf("ChunkLoaderMap").forGetter(data -> data.chunkloaderMap),
+					PLAYER_TIME_MAP_CODEC.fieldOf("PlayerTimeMap").forGetter(data -> data.playerTimeMap)
 			).apply(instance, ChunkData::new));
 
-	public ChunkData(Map<ResourceKey<Level>, LongSet> dimensionLoaderMap, Map<UUID, Long> playerTimeMap) {
-		this.chunkloaderMap = dimensionLoaderMap;
-		this.playerTimeMap = playerTimeMap;
+	public ChunkData(Map<ResourceKey<Level>, LongSet> dimensionLoaderMap, Map<UUID, Long> playerTime) {
+		this.chunkloaderMap = new HashMap<>();
+		this.chunkloaderMap.putAll(dimensionLoaderMap);
+		this.playerTimeMap = new HashMap<>();
+		this.playerTimeMap.putAll(playerTime);
 	}
 
 	public ChunkData() {
@@ -61,7 +64,7 @@ public class ChunkData extends SavedData {
 	 * @param level The level the ChunkLoader is in
 	 * @param pos   The position of the ChunkLoader
 	 */
-	public void addChunkLoaderPosition(Level level, BlockPos pos) {
+	public void addChunkLoaderPosition(@NotNull Level level, @NotNull BlockPos pos) {
 		ResourceKey<Level> dimensionLocation = level.dimension();
 		LongSet loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new LongOpenHashSet());
 
@@ -77,7 +80,7 @@ public class ChunkData extends SavedData {
 	 * @param level The level the ChunkLoader was in
 	 * @param pos   The position of the ChunkLoader
 	 */
-	public void removeChunkLoaderPosition(Level level, BlockPos pos) {
+	public void removeChunkLoaderPosition(@NotNull Level level, @NotNull BlockPos pos) {
 		ResourceKey<Level> dimensionLocation = level.dimension();
 		LongSet loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new LongOpenHashSet());
 
@@ -87,10 +90,9 @@ public class ChunkData extends SavedData {
 		this.setDirty();
 	}
 
-	@SuppressWarnings("deprecation")
-	public List<ChunkPos> getActiveChunkLoaderChunks(ServerLevel level) {
+	public List<ChunkPos> getActiveChunkLoaderChunks(@NotNull ServerLevel level) {
 		List<ChunkPos> chunkPosList = new ArrayList<>();
-		LongSet loaderPositions = chunkloaderMap.getOrDefault(level.dimension().location(), new LongOpenHashSet());
+		LongSet loaderPositions = chunkloaderMap.getOrDefault(level.dimension(), new LongOpenHashSet());
 		for (long posLong : loaderPositions) {
 			final BlockPos pos = BlockPos.of(posLong);
 			//Check if area is loaded and if the block is active
@@ -109,7 +111,7 @@ public class ChunkData extends SavedData {
 	 * @param dimension The dimension to get the chunk loaders from
 	 * @return The list of chunk loaders in the dimension
 	 */
-	public List<BlockPos> generateList(ResourceKey<Level> dimension) {
+	public List<BlockPos> generateList(@NotNull ResourceKey<Level> dimension) {
 		List<BlockPos> positions = new ArrayList<>();
 		//Get all the chunk loaders in the dimension
 		LongSet chunkLoaderList = chunkloaderMap.getOrDefault(dimension, new LongOpenHashSet());
@@ -126,7 +128,7 @@ public class ChunkData extends SavedData {
 	 * @param positions The list of positions to check
 	 * @return The list of active chunk loaders in the dimension
 	 */
-	public List<BlockPos> getActivePositions(ServerLevel level, List<BlockPos> positions) {
+	public List<BlockPos> getActivePositions(@NotNull ServerLevel level, @NotNull List<BlockPos> positions) {
 		List<BlockPos> posList = new ArrayList<>(positions);
 		posList.removeIf(pos -> {
 			if (level.isAreaLoaded(pos, 1)) {
@@ -144,7 +146,7 @@ public class ChunkData extends SavedData {
 	 * @param uuid The UUID of the player
 	 * @return The last time the player was seen
 	 */
-	public long getLastSeen(UUID uuid) {
+	public long getLastSeen(@NotNull UUID uuid) {
 		return playerTimeMap.getOrDefault(uuid, 0L);
 	}
 
@@ -154,7 +156,7 @@ public class ChunkData extends SavedData {
 	 * @param uuid     The UUID of the player
 	 * @param gameTime The last time the player was seen
 	 */
-	public void addPlayer(UUID uuid, long gameTime) {
+	public void addPlayer(@NotNull UUID uuid, long gameTime) {
 		playerTimeMap.put(uuid, gameTime);
 		this.setDirty();
 	}
@@ -164,16 +166,20 @@ public class ChunkData extends SavedData {
 	 *
 	 * @param uuid The UUID of the player
 	 */
-	public void removePlayer(UUID uuid) {
-		playerTimeMap.remove(uuid);
-		this.setDirty();
+	public void removePlayer(@NotNull UUID uuid) {
+		if (playerTimeMap != null) {
+			playerTimeMap.remove(uuid);
+			this.setDirty();
+		} else {
+			ChunkyMcChunkFace.LOGGER.warn("Attempted to remove a player from the ChunkData, but the playerTimeMap is null.");
+		}
 	}
 
 	public static SavedDataType<ChunkData> type() {
 		return new SavedDataType<>(DATA_NAME, ChunkData::new, CODEC, null);
 	}
 
-	public static ChunkData get(Level level) {
+	public static ChunkData get(@NotNull Level level) {
 		if (!(level instanceof ServerLevel)) {
 			throw new RuntimeException("Attempted to get the data from a client level. This is wrong.");
 		}
