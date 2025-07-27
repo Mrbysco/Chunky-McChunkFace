@@ -6,6 +6,7 @@ import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -23,14 +24,15 @@ public class ChunkyModelProvider extends ModelProvider {
 	}
 
 	public void createChunkloader(BlockModelGenerators blockModels, DeferredBlock<ChunkLoaderBlock> chunkLoader) {
-		ResourceLocation onLocation = modLocation("block/hourglass");
-		ResourceLocation offLocation = modLocation("block/hourglass_off");
+		ResourceLocation hourglass = modLocation("block/hourglass");
+		MultiVariant onLocation = BlockModelGenerators.plainVariant(hourglass);
+		MultiVariant offLocation = BlockModelGenerators.plainVariant(modLocation("block/hourglass_off"));
 		blockModels.blockStateOutput
 				.accept(
-						MultiVariantGenerator.multiVariant(chunkLoader.get())
+						MultiVariantGenerator.dispatch(chunkLoader.get())
 								.with(BlockModelGenerators.createBooleanModelDispatch(BlockStateProperties.ENABLED, onLocation, offLocation))
 				);
-		blockModels.registerSimpleItemModel(chunkLoader.get(), onLocation);
+		blockModels.registerSimpleItemModel(chunkLoader.get(), hourglass);
 
 	}
 }

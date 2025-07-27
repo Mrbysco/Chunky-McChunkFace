@@ -40,8 +40,8 @@ public class ChunkyMcChunkFace {
 				for (Map.Entry<BlockPos, TicketSet> entry : ticketHelper.getBlockTickets().entrySet()) {
 					//Only bother looking at non ticking chunks as we don't register any "fully" ticking chunks
 					BlockPos pos = entry.getKey();
-					LongSet forcedChunks = entry.getValue().nonTicking();
-					LongSet tickingForcedChunks = entry.getValue().ticking();
+					LongSet forcedChunks = entry.getValue().normal();
+					LongSet tickingForcedChunks = entry.getValue().naturalSpawning();
 
 					ValidationHelper.validateTickets(serverLevel, dimensionLocation, pos, ticketHelper, forcedChunks, false);
 					ValidationHelper.validateTickets(serverLevel, dimensionLocation, pos, ticketHelper, tickingForcedChunks, true);
@@ -70,6 +70,7 @@ public class ChunkyMcChunkFace {
 			eventBus.addListener(ClientHandler::registerKeyMappings);
 			eventBus.addListener(ClientHandler::registerEntityRenders);
 			eventBus.addListener(ClientHandler::onRegisterRenderTypes);
+			eventBus.addListener(ClientHandler::registerRenderPipeline);
 			NeoForge.EVENT_BUS.addListener(KeyHandler::onClientTick);
 		}
 	}
@@ -81,5 +82,9 @@ public class ChunkyMcChunkFace {
 	private void fillCreativeTab(BuildCreativeModeTabContentsEvent event) {
 		if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS)
 			event.accept(ChunkyRegistry.CHUNK_LOADER.get());
+	}
+
+	public static ResourceLocation modLoc(String path) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

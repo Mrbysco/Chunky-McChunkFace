@@ -7,5 +7,5 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 public class ChunkyTags {
-	public static final TagKey<Block> UPGRADE_BLOCKS = BlockTags.create(ResourceLocation.fromNamespaceAndPath(ChunkyMcChunkFace.MOD_ID, "upgrade_blocks"));
+	public static final TagKey<Block> UPGRADE_BLOCKS = BlockTags.create(ChunkyMcChunkFace.modLoc("upgrade_blocks"));
 }

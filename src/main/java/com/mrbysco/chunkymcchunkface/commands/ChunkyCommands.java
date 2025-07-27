@@ -19,8 +19,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -65,7 +67,7 @@ public class ChunkyCommands {
 	 * @return A list of all active Chunk Loader positions
 	 */
 	protected static List<String> getActivePositions(ServerLevel dimensionLevel) {
-		ResourceLocation dimension = dimensionLevel.dimension().location();
+		ResourceKey<Level> dimension = dimensionLevel.dimension();
 		ChunkData data = ChunkData.get(dimensionLevel);
 		List<BlockPos> positions = data.getActivePositions(dimensionLevel, data.generateList(dimension));
 		return positions.stream().map(pos -> pos.getX() + " " + pos.getY() + " " + pos.getZ()).toList();
@@ -81,7 +83,7 @@ public class ChunkyCommands {
 	 */
 	private int generateList(CommandContext<CommandSourceStack> ctx, boolean enabledOnly) throws CommandSyntaxException {
 		ServerLevel dimensionLevel = DimensionArgument.getDimension(ctx, "dimension");
-		ResourceLocation dimension = dimensionLevel.dimension().location();
+		ResourceKey<Level> dimension = dimensionLevel.dimension();
 		//Get list of Chunk Loader positions for the dimension
 		ChunkData data = ChunkData.get(dimensionLevel);
 		List<BlockPos> positions = data.generateList(dimension);
@@ -101,8 +103,8 @@ public class ChunkyCommands {
 				BlockPos pos = positions.get(i);
 				MutableComponent position = ComponentUtils.wrapInSquareBrackets(Component.literal(pos.toShortString())).withStyle((style) ->
 						style.withColor(ChatFormatting.GOLD)
-								.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + pos.getX() + " " + pos.getY() + " " + pos.getZ()))
-								.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.coordinates.tooltip"))));
+								.withClickEvent(new ClickEvent.SuggestCommand("/tp @s " + pos.getX() + " " + pos.getY() + " " + pos.getZ()))
+								.withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip"))));
 				formattedComponent.append(position);
 				if (i < positions.size() - 1)
 					formattedComponent.append(component);
@@ -145,7 +147,7 @@ public class ChunkyCommands {
 	 */
 	private static int disableAllChunkLoaders(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		ServerLevel dimensionLevel = DimensionArgument.getDimension(ctx, "dimension");
-		ResourceLocation dimension = dimensionLevel.dimension().location();
+		ResourceKey<Level> dimension = dimensionLevel.dimension();
 		ChunkData data = ChunkData.get(dimensionLevel);
 		List<BlockPos> positions = data.getActivePositions(dimensionLevel, data.generateList(dimension));
 		MutableComponent dimensionComponent = Component.literal(dimension.toString()).withStyle(ChatFormatting.GOLD);

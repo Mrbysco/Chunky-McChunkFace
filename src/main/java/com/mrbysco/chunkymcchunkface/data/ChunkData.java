@@ -1,20 +1,24 @@
 package com.mrbysco.chunkymcchunkface.data;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.codecs.UnboundedMapCodec;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
+import it.unimi.dsi.fastutil.longs.LongCollection;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
 import java.util.ArrayList;
@@ -26,10 +30,23 @@ import java.util.UUID;
 public class ChunkData extends SavedData {
 	private static final String DATA_NAME = ChunkyMcChunkFace.MOD_ID + "_data";
 
-	public final Map<ResourceLocation, LongSet> chunkloaderMap;
+	public final Map<ResourceKey<Level>, LongSet> chunkloaderMap;
 	public final Map<UUID, Long> playerTimeMap;
 
-	public ChunkData(Map<ResourceLocation, LongSet> dimensionLoaderMap, Map<UUID, Long> playerTimeMap) {
+	public static Codec<LongSet> LONG_SET = Codec.LONG_STREAM.xmap(LongOpenHashSet::toSet, LongCollection::longStream);
+	public static final UnboundedMapCodec<ResourceKey<Level>, LongSet> DIMENSION_LOADER_CODEC = Codec.unboundedMap(
+			ResourceKey.codec(Registries.DIMENSION), LONG_SET
+	);
+	public static final UnboundedMapCodec<UUID, Long> PLAYER_TIME_MAP_CODEC = Codec.unboundedMap(
+			UUIDUtil.CODEC, Codec.STRING.xmap(Long::parseLong, String::valueOf)
+	);
+	public static final Codec<ChunkData> CODEC = RecordCodecBuilder.create(instance -> instance
+			.group(
+					DIMENSION_LOADER_CODEC.optionalFieldOf("ChunkLoaderMap", Map.of()).forGetter(data -> data.chunkloaderMap),
+					PLAYER_TIME_MAP_CODEC.optionalFieldOf("PlayerTimeMap", Map.of()).forGetter(data -> data.playerTimeMap)
+			).apply(instance, ChunkData::new));
+
+	public ChunkData(Map<ResourceKey<Level>, LongSet> dimensionLoaderMap, Map<UUID, Long> playerTimeMap) {
 		this.chunkloaderMap = dimensionLoaderMap;
 		this.playerTimeMap = playerTimeMap;
 	}
@@ -45,7 +62,7 @@ public class ChunkData extends SavedData {
 	 * @param pos   The position of the ChunkLoader
 	 */
 	public void addChunkLoaderPosition(Level level, BlockPos pos) {
-		ResourceLocation dimensionLocation = level.dimension().location();
+		ResourceKey<Level> dimensionLocation = level.dimension();
 		LongSet loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new LongOpenHashSet());
 
 		loaderMap.add(pos.asLong());
@@ -61,7 +78,7 @@ public class ChunkData extends SavedData {
 	 * @param pos   The position of the ChunkLoader
 	 */
 	public void removeChunkLoaderPosition(Level level, BlockPos pos) {
-		ResourceLocation dimensionLocation = level.dimension().location();
+		ResourceKey<Level> dimensionLocation = level.dimension();
 		LongSet loaderMap = chunkloaderMap.getOrDefault(dimensionLocation, new LongOpenHashSet());
 
 		loaderMap.remove(pos.asLong());
@@ -92,7 +109,7 @@ public class ChunkData extends SavedData {
 	 * @param dimension The dimension to get the chunk loaders from
 	 * @return The list of chunk loaders in the dimension
 	 */
-	public List<BlockPos> generateList(ResourceLocation dimension) {
+	public List<BlockPos> generateList(ResourceKey<Level> dimension) {
 		List<BlockPos> positions = new ArrayList<>();
 		//Get all the chunk loaders in the dimension
 		LongSet chunkLoaderList = chunkloaderMap.getOrDefault(dimension, new LongOpenHashSet());
@@ -152,58 +169,8 @@ public class ChunkData extends SavedData {
 		this.setDirty();
 	}
 
-	public static ChunkData load(CompoundTag tag, HolderLookup.Provider provider) {
-		ListTag loaderMapTag = tag.getList("ChunkLoaderMap", CompoundTag.TAG_COMPOUND);
-		Map<ResourceLocation, LongSet> loaderMap = new HashMap<>();
-
-		for (int i = 0; i < loaderMapTag.size(); ++i) {
-			CompoundTag listTag = loaderMapTag.getCompound(i);
-			String dimension = listTag.getString("Dimension");
-			ResourceLocation dimensionLocation = ResourceLocation.tryParse(dimension);
-
-			LongSet chunkLoaderSet = new LongOpenHashSet();
-			for (long chunk : listTag.getLongArray("BlockPositions")) {
-				chunkLoaderSet.add(chunk);
-			}
-			loaderMap.put(dimensionLocation, chunkLoaderSet);
-		}
-
-		ListTag playerTimeTag = tag.getList("PlayerTimeMap", CompoundTag.TAG_COMPOUND);
-		Map<UUID, Long> playerTimeMap = new HashMap<>();
-		for (int i = 0; i < playerTimeTag.size(); ++i) {
-			CompoundTag listTag = playerTimeTag.getCompound(i);
-			UUID uuid = listTag.getUUID("UUID");
-			long time = listTag.getLong("Time");
-
-			playerTimeMap.put(uuid, time);
-		}
-
-		return new ChunkData(loaderMap, playerTimeMap);
-	}
-
-	@Override
-	public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
-		ListTag loaderMapTag = new ListTag();
-		for (Map.Entry<ResourceLocation, LongSet> entry : chunkloaderMap.entrySet()) {
-			CompoundTag loaderTag = new CompoundTag();
-			loaderTag.putString("Dimension", entry.getKey().toString());
-			loaderTag.putLongArray("BlockPositions", entry.getValue().toLongArray());
-
-			loaderMapTag.add(loaderTag);
-		}
-		tag.put("ChunkLoaderMap", loaderMapTag);
-
-		ListTag playerTimeTag = new ListTag();
-		for (Map.Entry<UUID, Long> entry : playerTimeMap.entrySet()) {
-			CompoundTag playerTag = new CompoundTag();
-			playerTag.putUUID("UUID", entry.getKey());
-			playerTag.putLong("Time", entry.getValue());
-
-			playerTimeTag.add(playerTag);
-		}
-		tag.put("PlayerTimeMap", playerTimeTag);
-
-		return tag;
+	public static SavedDataType<ChunkData> type() {
+		return new SavedDataType<>(DATA_NAME, ChunkData::new, CODEC, null);
 	}
 
 	public static ChunkData get(Level level) {
@@ -213,6 +180,6 @@ public class ChunkData extends SavedData {
 		ServerLevel overworld = level.getServer().overworld();
 
 		DimensionDataStorage storage = overworld.getDataStorage();
-		return storage.computeIfAbsent(new Factory<>(ChunkData::new, ChunkData::load), DATA_NAME);
+		return storage.computeIfAbsent(type());
 	}
 }

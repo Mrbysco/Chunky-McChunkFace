@@ -8,6 +8,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent;
+import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 
 public class ClientHandler {
 	public static void onClientSetup(final FMLClientSetupEvent event) {
@@ -25,5 +26,9 @@ public class ClientHandler {
 	public static void onRegisterRenderTypes(final RegisterRenderBuffersEvent event) {
 		event.registerRenderBuffer(ChunkyRenderTypes.CHUNKY_TRANSLUCENT);
 		event.registerRenderBuffer(ChunkyRenderTypes.CHUNKY_LINE);
+	}
+
+	public static void registerRenderPipeline(RegisterRenderPipelinesEvent event) {
+		event.registerPipeline(ChunkyPipelines.LINES_NO_DEPTH);
 	}
 }

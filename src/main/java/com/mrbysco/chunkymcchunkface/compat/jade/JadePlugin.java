@@ -17,7 +17,7 @@ import snownee.jade.api.config.IPluginConfig;
 
 @WailaPlugin
 public class JadePlugin implements IWailaPlugin {
-	private static final ResourceLocation SHOW_TIME = ResourceLocation.fromNamespaceAndPath(ChunkyMcChunkFace.MOD_ID, "show_time");
+	private static final ResourceLocation SHOW_TIME = ChunkyMcChunkFace.modLoc("show_time");
 
 	@Override
 	public void register(IWailaCommonRegistration registration) {

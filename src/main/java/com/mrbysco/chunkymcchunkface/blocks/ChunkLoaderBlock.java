@@ -4,17 +4,10 @@ import com.mojang.serialization.MapCodec;
 import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkLoaderBlockEntity;
 import com.mrbysco.chunkymcchunkface.data.ChunkData;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
-import com.mrbysco.chunkymcchunkface.registry.ChunkyTags;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -30,8 +23,6 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class ChunkLoaderBlock extends BaseEntityBlock {
 	public static final MapCodec<ChunkLoaderBlock> CODEC = simpleCodec(ChunkLoaderBlock::new);
@@ -87,22 +78,8 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean p_51542_) {
-		if (!state.is(newState.getBlock())) {
-			if (!level.isClientSide) {
-				if (level.getBlockEntity(pos) instanceof ChunkLoaderBlockEntity blockEntity) {
-					//Remove chunk loading
-					blockEntity.disableChunkLoader();
-
-					//Remove from ChunkLoader map
-					ChunkData data = ChunkData.get(level);
-					data.removeChunkLoaderPosition(level, pos);
-					data.setDirty();
-				}
-			}
-
-			super.onRemove(state, level, pos, newState, p_51542_);
-		}
+	public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+		super.playerDestroy(level, player, pos, state, blockEntity, tool);
 	}
 
 	@Override
@@ -126,30 +103,6 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 				blockEntity.clearPlayerCache();
 				blockEntity.unloadChunks();
 			}
-		}
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> components, TooltipFlag flag) {
-		super.appendHoverText(stack, context, components, flag);
-		components.add(Component.literal("Chunk Loader").withStyle(ChatFormatting.YELLOW));
-		components.add(Component.literal(" "));
-		if (Screen.hasShiftDown()) {
-			components.add(Component.translatable("chunkymcchunkface.extend.text").withStyle(ChatFormatting.GOLD));
-			//Get a random block from the ChunkyTags.UPGRADE_BLOCKS tag every 2 seconds and get the translation key
-			var optionalTag = BuiltInRegistries.BLOCK.get(ChunkyTags.UPGRADE_BLOCKS);
-			if (optionalTag.isPresent()) {
-				var tag = optionalTag.get();
-				if (tag.size() > 0) {
-					int index = (int) (System.currentTimeMillis() / 1000 % tag.size());
-					Block randomBlock = tag.stream().toList().get(index).value();
-					Component blockName = Component.translatable(randomBlock.getDescriptionId()).withStyle(ChatFormatting.WHITE);
-					components.add(Component.translatable("chunkymcchunkface.blocks.text", blockName).withStyle(ChatFormatting.GREEN));
-				}
-			}
-
-		} else {
-			components.add(Component.translatable("chunkymcchunkface.shift.text").withStyle(ChatFormatting.GRAY));
 		}
 	}
 }

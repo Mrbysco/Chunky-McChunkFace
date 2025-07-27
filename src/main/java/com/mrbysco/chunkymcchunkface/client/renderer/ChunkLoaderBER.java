@@ -35,8 +35,7 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 	}
 
 	@Override
-	public void render(ChunkLoaderBlockEntity blockEntity, float partialTicks, PoseStack poseStack,
-	                   MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
+	public void render(ChunkLoaderBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 cameraPos) {
 		final Minecraft mc = Minecraft.getInstance();
 		final LocalPlayer player = mc.player;
 

@@ -3,6 +3,7 @@ package com.mrbysco.chunkymcchunkface.registry;
 import com.mrbysco.chunkymcchunkface.ChunkyMcChunkFace;
 import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
 import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkLoaderBlockEntity;
+import com.mrbysco.chunkymcchunkface.item.ChunkLoaderItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
@@ -27,6 +28,7 @@ public class ChunkyRegistry {
 
 	public static final Supplier<BlockEntityType<ChunkLoaderBlockEntity>> CHUNK_LOADER_ENTITY = BLOCK_ENTITIES.register("chunk_loader", () ->
 			new BlockEntityType<>(ChunkLoaderBlockEntity::new, CHUNK_LOADER.get()));
-	public static final DeferredItem<BlockItem> CHUNK_LOADER_ITEM = ITEMS.registerSimpleBlockItem(CHUNK_LOADER);
+	public static final DeferredItem<BlockItem> CHUNK_LOADER_ITEM = ITEMS.registerItem("chunk_loader", (properties) ->
+			new ChunkLoaderItem(CHUNK_LOADER.get(), properties));
 
 }

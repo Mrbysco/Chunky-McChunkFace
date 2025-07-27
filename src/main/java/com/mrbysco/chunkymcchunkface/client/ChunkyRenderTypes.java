@@ -1,41 +1,26 @@
 package com.mrbysco.chunkymcchunkface.client;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
 import java.util.OptionalDouble;
 
-public class ChunkyRenderTypes extends RenderType {
-	public ChunkyRenderTypes(String nameIn, VertexFormat formatIn, Mode drawMode, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
-		super(nameIn, formatIn, drawMode, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
-		throw new UnsupportedOperationException();
+public abstract class ChunkyRenderTypes extends RenderType {
+	public ChunkyRenderTypes(String name, int bufferSize, boolean affectsCrumbling, boolean sortOnUpload,
+	                         Runnable setupState, Runnable clearState) {
+		super(name, bufferSize, affectsCrumbling, sortOnUpload, setupState, clearState);
 	}
 
-	public static RenderType CHUNKY_LINE = create("chunkymcchunkface:lines_no_depth",
-			DefaultVertexFormat.POSITION_COLOR, Mode.LINES, 256, false, false,
-			CompositeState.builder()
-					.setShaderState(RenderStateShard.RENDERTYPE_LINES_SHADER)
+	public static RenderType CHUNKY_LINE = RenderType.create("chunkymcchunkface:lines_no_depth", 256,
+			ChunkyPipelines.LINES_NO_DEPTH, RenderType.CompositeState.builder()
 					.setLineState(new LineStateShard(OptionalDouble.of(8.0F)))
-					.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-					.setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
-					.setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
-					.setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
-					.setCullState(RenderStateShard.NO_CULL)
-					.setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
+					.setLayeringState(VIEW_OFFSET_Z_LAYERING)
+					.setOutputState(ITEM_ENTITY_TARGET)
 					.createCompositeState(false));
 
-	public static final RenderType CHUNKY_TRANSLUCENT = create("chunkymcchunkface:translucent",
-			DefaultVertexFormat.POSITION_COLOR, Mode.QUADS, 256, false, true,
-			CompositeState.builder()
-					.setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
+	public static RenderType CHUNKY_TRANSLUCENT = RenderType.create("chunkymcchunkface:translucent", 256,
+			ChunkyPipelines.TRANSLUCENT, RenderType.CompositeState.builder()
 					.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-					.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
 					.setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
-					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
-					.setCullState(RenderStateShard.NO_CULL)
-					.setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
 					.createCompositeState(false));
 }

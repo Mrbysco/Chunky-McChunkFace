@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ChunkLoaderBlockEntity extends BlockEntity {
@@ -328,8 +330,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 		super.loadAdditional(tag, provider);
-		this.tier = tag.getInt("Levels");
-		this.cooldown = tag.getInt("Cooldown");
+		this.tier = tag.getIntOr("Levels", 0);
+		this.cooldown = tag.getIntOr("Cooldown", 0);
 
 		if (!loadedChunks.isEmpty()) {
 			if (hasLevel()) {
@@ -338,18 +340,22 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 				loadedChunks.clear();
 			}
 		}
-		for (long chunk : tag.getLongArray("loadedChunks")) {
-			loadedChunks.add(chunk);
+		Optional<long[]> chunks = tag.getLongArray("loadedChunks");
+		if (chunks.isPresent()) {
+			for (long chunk : chunks.get()) {
+				loadedChunks.add(chunk);
+			}
 		}
 
-		ListTag playerCacheTag = tag.getList("playerCache", ListTag.TAG_COMPOUND);
+		ListTag playerCacheTag = tag.getListOrEmpty("playerCache");
 		for (int j = 0; j < playerCacheTag.size(); ++j) {
-			CompoundTag cacheTag = playerCacheTag.getCompound(j);
-			playerCache.add(cacheTag.getUUID("UUID"));
+			CompoundTag cacheTag = playerCacheTag.getCompoundOrEmpty(j);
+			cacheTag.read("UUID", UUIDUtil.CODEC)
+					.ifPresent(playerCache::add);
 		}
 
-		this.lastSeen = tag.getLong("lastSeen");
-		this.playerOnline = tag.getBoolean("playerOnline");
+		this.lastSeen = tag.getLongOr("lastSeen", 0L);
+		this.playerOnline = tag.getBooleanOr("playerOnline", false);
 	}
 
 	@Override
@@ -365,10 +371,23 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		ListTag playerCacheTag = new ListTag();
 		for (UUID uuid : playerCache) {
 			CompoundTag cacheTag = new CompoundTag();
-			cacheTag.putUUID("UUID", uuid);
+			cacheTag.store("UUID", UUIDUtil.CODEC, uuid);
 			playerCacheTag.add(cacheTag);
 		}
 		tag.put("playerCache", playerCacheTag);
+	}
+
+	@Override
+	public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+		//Remove chunk loading
+		this.disableChunkLoader();
+
+		//Remove from ChunkLoader map
+		ChunkData data = ChunkData.get(level);
+		data.removeChunkLoaderPosition(level, pos);
+		data.setDirty();
+
+		super.preRemoveSideEffects(pos, state);
 	}
 
 	@Override
