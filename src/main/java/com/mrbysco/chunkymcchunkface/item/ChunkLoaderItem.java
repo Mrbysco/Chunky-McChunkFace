@@ -18,6 +18,7 @@ public class ChunkLoaderItem extends BlockItem {
 		super(block, properties);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
 		tooltipAdder.accept(Component.literal("Chunk Loader").withStyle(ChatFormatting.YELLOW));

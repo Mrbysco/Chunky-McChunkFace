@@ -11,6 +11,7 @@ import net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent;
 import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 
 public class ClientHandler {
+	@SuppressWarnings("deprecation")
 	public static void onClientSetup(final FMLClientSetupEvent event) {
 		ItemBlockRenderTypes.setRenderLayer(ChunkyRegistry.CHUNK_LOADER.get(), ChunkSectionLayer.CUTOUT);
 	}
@@ -30,5 +31,6 @@ public class ClientHandler {
 
 	public static void registerRenderPipeline(RegisterRenderPipelinesEvent event) {
 		event.registerPipeline(ChunkyPipelines.LINES_NO_DEPTH);
+		event.registerPipeline(ChunkyPipelines.TRANSLUCENT);
 	}
 }

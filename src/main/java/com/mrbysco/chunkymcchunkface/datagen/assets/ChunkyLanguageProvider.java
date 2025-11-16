@@ -26,7 +26,7 @@ public class ChunkyLanguageProvider extends LanguageProvider {
 		add("chunkymcchunkface.extend.text", "Expand the loaded area by building a pyramid of allowed blocks beneath the chunk loader");
 		add("chunkymcchunkface.blocks.text", "An example of an allowed block is %s");
 
-		add("key.chunkymcchunkface.category", "Chunky McChunkFace");
+		add("key.category.chunkymcchunkface.category", "Chunky McChunkFace");
 		add("key.chunkymcchunkface.show_bounds", "Show Chunk Loader Radius");
 
 		add("config.jade.plugin_chunkymcchunkface.show_time", "Show time left");

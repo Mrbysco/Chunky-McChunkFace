@@ -29,6 +29,6 @@ public class ChunkyRegistry {
 	public static final Supplier<BlockEntityType<ChunkLoaderBlockEntity>> CHUNK_LOADER_ENTITY = BLOCK_ENTITIES.register("chunk_loader", () ->
 			new BlockEntityType<>(ChunkLoaderBlockEntity::new, CHUNK_LOADER.get()));
 	public static final DeferredItem<BlockItem> CHUNK_LOADER_ITEM = ITEMS.registerItem("chunk_loader", (properties) ->
-			new ChunkLoaderItem(CHUNK_LOADER.get(), properties));
+			new ChunkLoaderItem(CHUNK_LOADER.get(), properties.useBlockDescriptionPrefix()));
 
 }

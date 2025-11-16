@@ -8,6 +8,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,8 +17,9 @@ public class ChunkyBlockTagProvider extends BlockTagsProvider {
 		super(output, lookupProvider, ChunkyMcChunkFace.MOD_ID);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void addTags(HolderLookup.Provider provider) {
+	protected void addTags(@NotNull HolderLookup.Provider provider) {
 		this.tag(ChunkyTags.UPGRADE_BLOCKS).addTags(BlockTags.BEACON_BASE_BLOCKS);
 		this.tag(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(ChunkyRegistry.CHUNK_LOADER.get());
 	}

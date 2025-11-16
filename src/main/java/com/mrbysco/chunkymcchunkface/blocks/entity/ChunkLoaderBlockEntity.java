@@ -288,11 +288,11 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	 */
 	public int getRange(int tier) {
 		return switch (tier) {
-			default -> ChunkyConfig.COMMON.baseRange.get();
 			case 1 -> ChunkyConfig.COMMON.tier1Range.get();
 			case 2 -> ChunkyConfig.COMMON.tier2Range.get();
 			case 3 -> ChunkyConfig.COMMON.tier3Range.get();
 			case 4 -> ChunkyConfig.COMMON.tier4Range.get();
+			default -> ChunkyConfig.COMMON.baseRange.get();
 		};
 	}
 
