@@ -1,1 +1,1 @@
-* Update to 1.21.8
+* Fix serialization of the Chunk Loader blockentity
