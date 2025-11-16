@@ -1,5 +1,7 @@
 package com.mrbysco.chunkymcchunkface.client;
 
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
@@ -21,6 +23,11 @@ public abstract class ChunkyRenderTypes extends RenderType {
 	public static RenderType CHUNKY_TRANSLUCENT = RenderType.create("chunkymcchunkface:translucent", 256,
 			ChunkyPipelines.TRANSLUCENT, RenderType.CompositeState.builder()
 					.setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-					.setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
+					.setOutputState(ChunkyRenderTypes.TRANSLUCENT_TARGET)
 					.createCompositeState(false));
+
+	public static final RenderStateShard.OutputStateShard TRANSLUCENT_TARGET = new RenderStateShard.OutputStateShard("translucent_target", () -> {
+		RenderTarget rendertarget = Minecraft.getInstance().levelRenderer.getTranslucentTarget();
+		return rendertarget != null ? rendertarget : Minecraft.getInstance().getMainRenderTarget();
+	});
 }

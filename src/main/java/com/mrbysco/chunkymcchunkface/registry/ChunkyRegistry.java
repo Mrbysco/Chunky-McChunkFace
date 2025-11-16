@@ -23,7 +23,7 @@ public class ChunkyRegistry {
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ChunkyMcChunkFace.MOD_ID);
 
 	public static final DeferredBlock<ChunkLoaderBlock> CHUNK_LOADER = BLOCKS.registerBlock("chunk_loader",
-			ChunkLoaderBlock::new, Block.Properties.of().mapColor(MapColor.GOLD).strength(0.8F)
+			ChunkLoaderBlock::new, () -> Block.Properties.of().mapColor(MapColor.GOLD).strength(0.8F)
 					.sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.BLOCK));
 
 	public static final Supplier<BlockEntityType<ChunkLoaderBlockEntity>> CHUNK_LOADER_ENTITY = BLOCK_ENTITIES.register("chunk_loader", () ->

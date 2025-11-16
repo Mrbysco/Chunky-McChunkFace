@@ -167,7 +167,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	 */
 	public void unloadChunks() {
 		//Unload chunks based around the tier range
-		if (level != null && !level.isClientSide) {
+		if (level != null && !level.isClientSide()) {
 			ChunkyMcChunkFace.LOGGER.debug("Attempting to remove {} chunk tickets. pos: {} world: {}",
 					loadedChunks.size(), worldPosition.toShortString(), level.dimension().location());
 			ServerLevel serverLevel = (ServerLevel) level;
@@ -209,7 +209,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	public void loadChunks(int tier) {
 		if (isEnabled()) {
 			//Load chunks based around the tier range
-			if (level != null && !level.isClientSide) {
+			if (level != null && !level.isClientSide()) {
 				ServerLevel serverLevel = (ServerLevel) level;
 				long centerChunk = new ChunkPos(worldPosition).toLong();
 				int range = getRange(tier);
@@ -236,7 +236,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	 */
 	public void refreshChunks() {
 		//Unload chunks based around the old tier range and load chunks based around the new tier range
-		if (level != null && !level.isClientSide && isEnabled()) {
+		if (level != null && !level.isClientSide() && isEnabled()) {
 			unloadChunks();
 			loadChunks(getTier());
 		}

@@ -8,15 +8,18 @@ import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import com.mrbysco.chunkymcchunkface.util.ChunkyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntity> {
+public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntity, ChunkLoaderRenderState> {
 	public static boolean renderChunkRadius = false;
 	public static final int MAX_RENDER_Y = 1024;
 
@@ -34,26 +37,29 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 
 	}
 
+
 	@Override
-	public void render(ChunkLoaderBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 cameraPos) {
+	public void submit(ChunkLoaderRenderState renderState, PoseStack poseStack, SubmitNodeCollector nodeCollector, CameraRenderState cameraRenderState) {
 		final Minecraft mc = Minecraft.getInstance();
 		final LocalPlayer player = mc.player;
 
 		if (player == null) return;
 
 		if (player.getMainHandItem().is(ChunkyRegistry.CHUNK_LOADER_ITEM.get())) {
-			renderOutline(blockEntity, poseStack, bufferSource);
+			nodeCollector.submitCustomGeometry(poseStack, ChunkyRenderTypes.CHUNKY_LINE, (pose, vertexConsumer) -> {
+				renderOutline(renderState, poseStack, vertexConsumer);
+			});
 		}
 
 		if (mc.level != null && renderChunkRadius) {
-			final BlockPos loaderPos = blockEntity.getBlockPos();
+			final BlockPos loaderPos = renderState.blockPos;
 			final long posLong = loaderPos.asLong();
 			long centerChunk = new ChunkPos(loaderPos).toLong();
 
 			if (!rangeMap.containsKey(posLong)) {
-				rangeMap.put(posLong, blockEntity.getRange());
+				rangeMap.put(posLong, renderState.range);
 			}
-			List<ChunkPos> list = ChunkyHelper.generateChunkPosList(centerChunk, blockEntity.getRange()).stream().map(ChunkPos::new).toList();
+			List<ChunkPos> list = ChunkyHelper.generateChunkPosList(centerChunk, renderState.range).stream().map(ChunkPos::new).toList();
 
 			if (list.isEmpty()) return;
 
@@ -75,19 +81,18 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 				box = box.minmax(aabb);
 			}
 			box = box.inflate(0.01F);
-			VertexConsumer vertexConsumer = bufferSource.getBuffer(ChunkyRenderTypes.CHUNKY_TRANSLUCENT);
 
-			//Render the box
-			poseStack.pushPose();
-			poseStack.translate(-loaderPos.getX(), -loaderPos.getY(), -loaderPos.getZ());
+			AABB finalBox = box;
+			nodeCollector.submitCustomGeometry(poseStack, ChunkyRenderTypes.CHUNKY_TRANSLUCENT, (pose, vertexConsumer) -> {
+				//Render the box
+				poseStack.pushPose();
+				poseStack.translate(-loaderPos.getX(), -loaderPos.getY(), -loaderPos.getZ());
 
-			renderAABB(vertexConsumer, poseStack, box);
+				renderAABB(vertexConsumer, poseStack, finalBox);
 
-			poseStack.popPose();
+				poseStack.popPose();
+			});
 
-			if (bufferSource instanceof MultiBufferSource.BufferSource) {
-				((MultiBufferSource.BufferSource) bufferSource).endBatch();
-			}
 		}
 	}
 
@@ -148,13 +153,12 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 	 * Render an outline around the chunk loader
 	 * This method is only called when the player is holding the chunk loader item
 	 *
-	 * @param blockEntity  The chunk loader block entity
-	 * @param poseStack    The pose stack
-	 * @param bufferSource The buffer source
+	 * @param loaderRenderSTate The chunk loader block entity
+	 * @param poseStack         The pose stack
+	 * @param builder           The vertex builder
 	 */
-	private void renderOutline(ChunkLoaderBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource) {
-		final BlockPos loaderPos = blockEntity.getBlockPos();
-		VertexConsumer builder = bufferSource.getBuffer(ChunkyRenderTypes.CHUNKY_LINE);
+	private void renderOutline(ChunkLoaderRenderState loaderRenderSTate, PoseStack poseStack, VertexConsumer builder) {
+		final BlockPos loaderPos = loaderRenderSTate.blockPos;
 		AABB box = AABB.of(
 				new BoundingBox(loaderPos)
 		);
@@ -166,18 +170,27 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 		float[] onColor = new float[]{1F, 0.843137255F, 0, 1.0F};
 		float[] offColor = new float[]{0.5F, 0F, 0.125F, 1.0F};
 
-		float[] colorToUse = blockEntity.isEnabled() ? onColor : offColor;
-		ShapeRenderer.renderLineBox(poseStack, builder, box, colorToUse[0], colorToUse[1], colorToUse[2], colorToUse[3]);
+		float[] colorToUse = loaderRenderSTate.enabled ? onColor : offColor;
+		ShapeRenderer.renderLineBox(poseStack.last(), builder, box, colorToUse[0], colorToUse[1], colorToUse[2], colorToUse[3]);
 
-		if (bufferSource instanceof MultiBufferSource.BufferSource bufferSource1) {
-			bufferSource1.endBatch(ChunkyRenderTypes.CHUNKY_LINE);
-		}
 		poseStack.popPose();
 	}
 
 	@Override
 	public boolean shouldRender(ChunkLoaderBlockEntity blockEntity, Vec3 pos) {
 		return Vec3.atCenterOf(blockEntity.getBlockPos()).multiply(1.0D, 0.0D, 1.0D).closerThan(pos.multiply(1.0D, 0.0D, 1.0D), (double) this.getViewDistance());
+	}
+
+	@Override
+	public ChunkLoaderRenderState createRenderState() {
+		return new ChunkLoaderRenderState();
+	}
+
+	@Override
+	public void extractRenderState(ChunkLoaderBlockEntity blockEntity, ChunkLoaderRenderState renderState, float partialTick, Vec3 cameraPosition, @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+		BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
+		renderState.enabled = blockEntity.isEnabled();
+		renderState.range = blockEntity.getRange();
 	}
 
 	@Override

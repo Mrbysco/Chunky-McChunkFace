@@ -46,12 +46,12 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-		return level.isClientSide ? null : createTickerHelper(blockEntityType, ChunkyRegistry.CHUNK_LOADER_ENTITY.get(), ChunkLoaderBlockEntity::serverTick);
+		return level.isClientSide() ? null : createTickerHelper(blockEntityType, ChunkyRegistry.CHUNK_LOADER_ENTITY.get(), ChunkLoaderBlockEntity::serverTick);
 	}
 
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult pHitResult) {
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return InteractionResult.SUCCESS;
 		} else {
 			if (player instanceof FakePlayer) return InteractionResult.FAIL;
@@ -68,7 +68,7 @@ public class ChunkLoaderBlock extends BaseEntityBlock {
 
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState state1, boolean p_60570_) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			//Add to ChunkLoader map
 			ChunkData data = ChunkData.get(level);
 			data.addChunkLoaderPosition(level, pos);

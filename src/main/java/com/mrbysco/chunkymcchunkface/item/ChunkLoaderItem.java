@@ -2,7 +2,6 @@ package com.mrbysco.chunkymcchunkface.item;
 
 import com.mrbysco.chunkymcchunkface.registry.ChunkyTags;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -21,10 +20,9 @@ public class ChunkLoaderItem extends BlockItem {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
-		super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
 		tooltipAdder.accept(Component.literal("Chunk Loader").withStyle(ChatFormatting.YELLOW));
 		tooltipAdder.accept(Component.literal(" "));
-		if (Screen.hasShiftDown()) {
+		if (flag.hasShiftDown()) {
 			tooltipAdder.accept(Component.translatable("chunkymcchunkface.extend.text").withStyle(ChatFormatting.GOLD));
 			//Get a random block from the ChunkyTags.UPGRADE_BLOCKS tag every 2 seconds and get the translation key
 			var optionalTag = BuiltInRegistries.BLOCK.get(ChunkyTags.UPGRADE_BLOCKS);

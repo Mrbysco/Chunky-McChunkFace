@@ -7,7 +7,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyHandler {
-	public static final KeyMapping KEY_SHOW_BOUNDS = new KeyMapping(getKey("show_bounds"), GLFW.GLFW_KEY_BACKSLASH, getKey("category"));
+	private static KeyMapping.Category CATEGORY = new KeyMapping.Category(ChunkyMcChunkFace.modLoc("category"));
+	public static final KeyMapping KEY_SHOW_BOUNDS = new KeyMapping(getKey("show_bounds"), GLFW.GLFW_KEY_BACKSLASH, CATEGORY);
 
 	private static String getKey(String name) {
 		return String.join(".", "key", ChunkyMcChunkFace.MOD_ID, name);
