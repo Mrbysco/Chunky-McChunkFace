@@ -29,6 +29,6 @@
   "chunkymcchunkface.waila.time.online": "Player is online, timer is not active",
   "chunkymcchunkface.waila.time.remaining": "Time left: %s second(s)",
   "config.jade.plugin_chunkymcchunkface.show_time": "Show time left",
-  "key.chunkymcchunkface.category": "Chunky McChunkFace",
+  "key.category.chunkymcchunkface.category": "Chunky McChunkFace",
   "key.chunkymcchunkface.show_bounds": "Show Chunk Loader Radius"
 }
