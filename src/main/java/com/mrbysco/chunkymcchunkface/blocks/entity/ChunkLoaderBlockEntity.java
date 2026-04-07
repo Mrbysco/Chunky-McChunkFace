@@ -169,7 +169,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		//Unload chunks based around the tier range
 		if (level != null && !level.isClientSide()) {
 			ChunkyMcChunkFace.LOGGER.debug("Attempting to remove {} chunk tickets. pos: {} world: {}",
-					loadedChunks.size(), worldPosition.toShortString(), level.dimension().location());
+					loadedChunks.size(), worldPosition.toShortString(), level.dimension().identifier());
 			ServerLevel serverLevel = (ServerLevel) level;
 			ChunkData data = ChunkData.get(level);
 

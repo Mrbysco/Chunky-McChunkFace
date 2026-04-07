@@ -4,11 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkLoaderBlockEntity;
 import com.mrbysco.chunkymcchunkface.client.ChunkyRenderTypes;
+import com.mrbysco.chunkymcchunkface.client.LineHelper;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import com.mrbysco.chunkymcchunkface.util.ChunkyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -166,7 +166,7 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 
 		AABB finalBox = box;
 		nodeCollector.submitCustomGeometry(poseStack, ChunkyRenderTypes.CHUNKY_LINE, (pose, vertexConsumer) ->
-				ShapeRenderer.renderLineBox(pose, vertexConsumer, finalBox, colorToUse[0], colorToUse[1], colorToUse[2], colorToUse[3])
+				LineHelper.renderLineBox(pose, vertexConsumer, finalBox, colorToUse[0], colorToUse[1], colorToUse[2], colorToUse[3])
 		);
 
 		poseStack.popPose();

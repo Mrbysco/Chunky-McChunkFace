@@ -2,15 +2,11 @@ package com.mrbysco.chunkymcchunkface.datagen.data;
 
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.WritableRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import java.util.List;
@@ -38,11 +34,5 @@ public class ChunkyLootProvider extends LootTableProvider {
 		protected Iterable<Block> getKnownBlocks() {
 			return (Iterable<Block>) ChunkyRegistry.BLOCKS.getEntries().stream().map(holder -> (Block) holder.get())::iterator;
 		}
-	}
-
-	@Override
-	protected void validate(WritableRegistry<LootTable> writableRegistry, ValidationContext validationContext,
-	                        ProblemReporter.Collector collector) {
-		super.validate(writableRegistry, validationContext, collector);
 	}
 }

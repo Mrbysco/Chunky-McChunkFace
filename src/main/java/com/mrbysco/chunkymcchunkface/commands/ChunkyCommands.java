@@ -34,7 +34,7 @@ public class ChunkyCommands {
 		CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
 		final LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(ChunkyMcChunkFace.MOD_ID);
-		root.requires((source) -> source.hasPermission(2))
+		root.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 				.then(Commands.literal("list")
 						.then(Commands.argument("dimension", DimensionArgument.dimension())
 								.executes(ctx -> generateList(ctx, false))

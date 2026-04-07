@@ -9,7 +9,7 @@ import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
@@ -24,7 +24,7 @@ public class ChunkyModelProvider extends ModelProvider {
 	}
 
 	public void createChunkloader(BlockModelGenerators blockModels, DeferredBlock<ChunkLoaderBlock> chunkLoader) {
-		ResourceLocation hourglass = modLocation("block/hourglass");
+		Identifier hourglass = modLocation("block/hourglass");
 		MultiVariant onLocation = BlockModelGenerators.plainVariant(hourglass);
 		MultiVariant offLocation = BlockModelGenerators.plainVariant(modLocation("block/hourglass_off"));
 		blockModels.blockStateOutput

@@ -2,15 +2,13 @@ package com.mrbysco.chunkymcchunkface;
 
 import com.mojang.logging.LogUtils;
 import com.mrbysco.chunkymcchunkface.blocks.entity.ValidationHelper;
-import com.mrbysco.chunkymcchunkface.client.ClientHandler;
-import com.mrbysco.chunkymcchunkface.client.KeyHandler;
 import com.mrbysco.chunkymcchunkface.commands.ChunkyCommands;
 import com.mrbysco.chunkymcchunkface.config.ChunkyConfig;
 import com.mrbysco.chunkymcchunkface.handler.PlayerHandler;
 import com.mrbysco.chunkymcchunkface.registry.ChunkyRegistry;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -33,9 +31,9 @@ public class ChunkyMcChunkFace {
 	public static final String MOD_ID = "chunkymcchunkface";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final TicketController CONTROLLER = new TicketController(ResourceLocation.fromNamespaceAndPath(MOD_ID, "default"),
+	public static final TicketController CONTROLLER = new TicketController(Identifier.fromNamespaceAndPath(MOD_ID, "default"),
 			(serverLevel, ticketHelper) -> {
-				ResourceLocation dimensionLocation = serverLevel.dimension().location();
+				Identifier dimensionLocation = serverLevel.dimension().identifier();
 
 				for (Map.Entry<BlockPos, TicketSet> entry : ticketHelper.getBlockTickets().entrySet()) {
 					//Only bother looking at non ticking chunks as we don't register any "fully" ticking chunks
@@ -65,13 +63,6 @@ public class ChunkyMcChunkFace {
 
 		if (dist.isClient()) {
 			container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-
-			eventBus.addListener(ClientHandler::onClientSetup);
-			eventBus.addListener(ClientHandler::registerKeyMappings);
-			eventBus.addListener(ClientHandler::registerEntityRenders);
-			eventBus.addListener(ClientHandler::onRegisterRenderTypes);
-			eventBus.addListener(ClientHandler::registerRenderPipeline);
-			NeoForge.EVENT_BUS.addListener(KeyHandler::onClientTick);
 		}
 	}
 
@@ -84,7 +75,7 @@ public class ChunkyMcChunkFace {
 			event.accept(ChunkyRegistry.CHUNK_LOADER.get());
 	}
 
-	public static ResourceLocation modLoc(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier modLoc(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

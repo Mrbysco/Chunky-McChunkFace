@@ -7,14 +7,14 @@ import com.mrbysco.chunkymcchunkface.util.ChunkyHelper;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.world.chunk.TicketHelper;
 
 public class ValidationHelper {
-	public static void validateTickets(ServerLevel serverLevel, ResourceLocation dimensionLocation, BlockPos pos,
+	public static void validateTickets(ServerLevel serverLevel, Identifier dimensionLocation, BlockPos pos,
 									   TicketHelper ticketHelper, LongSet forcedChunks, boolean ticking) {
 		int ticketCount = forcedChunks.size();
 		if (ticketCount > 0) {

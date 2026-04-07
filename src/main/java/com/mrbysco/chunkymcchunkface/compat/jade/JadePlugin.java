@@ -5,7 +5,7 @@ import com.mrbysco.chunkymcchunkface.blocks.ChunkLoaderBlock;
 import com.mrbysco.chunkymcchunkface.blocks.entity.ChunkLoaderBlockEntity;
 import com.mrbysco.chunkymcchunkface.config.ChunkyConfig;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
@@ -17,7 +17,7 @@ import snownee.jade.api.config.IPluginConfig;
 
 @WailaPlugin
 public class JadePlugin implements IWailaPlugin {
-	private static final ResourceLocation SHOW_TIME = ChunkyMcChunkFace.modLoc("show_time");
+	private static final Identifier SHOW_TIME = ChunkyMcChunkFace.modLoc("show_time");
 
 	@Override
 	public void register(IWailaCommonRegistration registration) {
@@ -57,7 +57,7 @@ public class JadePlugin implements IWailaPlugin {
 		}
 
 		@Override
-		public ResourceLocation getUid() {
+		public Identifier getUid() {
 			return JadePlugin.SHOW_TIME;
 		}
 	}
