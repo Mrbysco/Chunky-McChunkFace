@@ -32,7 +32,7 @@ public class ValidationHelper {
 					}
 					//Next we validate that all the chunks are still properly contained and the chunks we want to load
 					// didn't change (such as from the max radius of the Chunk Loader miner becoming lower)
-					LongSet chunks = ChunkyHelper.generateChunkPosList(new ChunkPos(pos).toLong(), blockEntity.getTier());
+					LongSet chunks = ChunkyHelper.generateChunkPosList(ChunkPos.pack(pos), blockEntity.getTier());
 					if (chunks.isEmpty()) {
 						//Probably never the case, but if we have no chunks that should be loaded anymore;
 						// just release them all

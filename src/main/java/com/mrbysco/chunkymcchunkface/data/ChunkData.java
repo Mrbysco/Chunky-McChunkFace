@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ChunkData extends SavedData {
-	private static final String DATA_NAME = ChunkyMcChunkFace.MOD_ID + "_data";
+	private static final Identifier DATA_NAME = ChunkyMcChunkFace.modLoc("chunk_data");
 
 	public final Map<ResourceKey<Level>, LongSet> chunkloaderMap;
 	public final Map<UUID, Long> playerTimeMap;
@@ -99,7 +100,7 @@ public class ChunkData extends SavedData {
 			if (level.isAreaLoaded(pos, 1)) {
 				BlockState state = level.getBlockState(pos);
 				if (state.is(ChunkyRegistry.CHUNK_LOADER.get()) && state.getValue(ChunkLoaderBlock.ENABLED))
-					chunkPosList.add(new ChunkPos(pos));
+					chunkPosList.add(ChunkPos.containing(pos));
 			}
 		}
 		return chunkPosList;
@@ -185,7 +186,7 @@ public class ChunkData extends SavedData {
 		}
 		ServerLevel overworld = level.getServer().overworld();
 
-		DimensionDataStorage storage = overworld.getDataStorage();
+		SavedDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(type());
 	}
 }

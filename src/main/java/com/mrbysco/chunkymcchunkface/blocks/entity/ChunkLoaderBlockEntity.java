@@ -173,14 +173,14 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 			ServerLevel serverLevel = (ServerLevel) level;
 			ChunkData data = ChunkData.get(level);
 
-			long centerChunk = new ChunkPos(worldPosition).toLong();
+			long centerChunk = ChunkPos.pack(worldPosition);
 			int range = getRange(tier);
 			LongSet chunkPosList = ChunkyHelper.generateChunkPosList(centerChunk, range);
 			List<ChunkPos> loaderList = data.getActiveChunkLoaderChunks(serverLevel);
 
 			//Remove the chunks that contain an active ChunkLoader from the list
 			loaderList.forEach(pos -> {
-				long longPos = pos.toLong();
+				long longPos = pos.pack();
 				chunkPosList.remove(longPos);
 				loadedChunks.remove(longPos);
 			});
@@ -211,7 +211,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 			//Load chunks based around the tier range
 			if (level != null && !level.isClientSide()) {
 				ServerLevel serverLevel = (ServerLevel) level;
-				long centerChunk = new ChunkPos(worldPosition).toLong();
+				long centerChunk = ChunkPos.pack(worldPosition);
 				int range = getRange(tier);
 
 				LongSet chunkPosList = ChunkyHelper.generateChunkPosList(centerChunk, range);

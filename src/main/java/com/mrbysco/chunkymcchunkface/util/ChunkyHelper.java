@@ -24,7 +24,7 @@ public class ChunkyHelper {
 		for (int x = centerX - range; x <= centerX + range; x++) {
 			for (int z = centerZ - range; z <= centerZ + range; z++) {
 				ChunkPos chunkPos = new ChunkPos(x, z);
-				chunkPosList.add(chunkPos.toLong());
+				chunkPosList.add(chunkPos.pack());
 			}
 		}
 

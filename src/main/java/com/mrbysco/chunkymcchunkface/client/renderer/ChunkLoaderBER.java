@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -51,13 +51,13 @@ public class ChunkLoaderBER implements BlockEntityRenderer<ChunkLoaderBlockEntit
 		if (mc.level != null && renderChunkRadius) {
 			final BlockPos loaderPos = renderState.blockPos;
 			final long posLong = loaderPos.asLong();
-			long centerChunk = new ChunkPos(loaderPos).toLong();
+			long centerChunk = ChunkPos.pack(loaderPos);
 			final int range = renderState.range;
 
 			if (!rangeMap.containsKey(posLong)) {
 				rangeMap.put(posLong, range);
 			}
-			List<ChunkPos> list = ChunkyHelper.generateChunkPosList(centerChunk, range).longStream().mapToObj(ChunkPos::new).toList();
+			List<ChunkPos> list = ChunkyHelper.generateChunkPosList(centerChunk, range).longStream().mapToObj(ChunkPos::unpack).toList();
 
 			if (list.isEmpty()) return;
 
