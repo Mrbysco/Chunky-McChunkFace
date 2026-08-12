@@ -21,6 +21,6 @@ public class ChunkyBlockTagProvider extends BlockTagsProvider {
 	@Override
 	protected void addTags(@NotNull HolderLookup.Provider provider) {
 		this.tag(ChunkyTags.UPGRADE_BLOCKS).addTags(BlockTags.BEACON_BASE_BLOCKS);
-		this.tag(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(ChunkyRegistry.CHUNK_LOADER.get());
+		this.tag(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(ChunkyRegistry.CHUNK_LOADER.getKey());
 	}
 }

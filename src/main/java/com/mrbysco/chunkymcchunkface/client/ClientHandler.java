@@ -7,7 +7,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent;
 import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -22,12 +21,6 @@ public class ClientHandler {
 	@SubscribeEvent
 	public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerBlockEntityRenderer(ChunkyRegistry.CHUNK_LOADER_ENTITY.get(), ChunkLoaderBER::new);
-	}
-
-	@SubscribeEvent
-	public static void onRegisterRenderTypes(final RegisterRenderBuffersEvent event) {
-		event.registerRenderBuffer(ChunkyRenderTypes.CHUNKY_TRANSLUCENT);
-		event.registerRenderBuffer(ChunkyRenderTypes.CHUNKY_LINE);
 	}
 
 	@SubscribeEvent
